@@ -55,3 +55,18 @@ print( tuple([1,2,3]) )
 
 print( set("Python") )
 print( set([1,2,3]) )
+
+
+# 변수와 상수
+# 변수이름을 정하는 법
+# 1. 숫자로 시작하면 안됨.
+# 2. 특수문자(!@#)을 사용할 수 없음. _(언더바 가능)
+# 3. 영소문자로 시작하고, 단어와 단어 사이에는 대문자(Camel Case)를 사용함.
+myVar = 10
+# 1myVar2 = 20
+# myVar!@# = 30
+sunDayOfEventSale = 1000
+
+PI = 3.14
+MY_CONST_VAR = 2000
+
