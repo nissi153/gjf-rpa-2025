@@ -41,3 +41,26 @@ This is a normal paragraph:
     This is a code block.
     
 end code block.
+
+
+```
+a = 123
+print( a )
+```
+
+```python
+a = 123
+print( a )
+
+```
+
+수평선
+-----------
+
+하이퍼링크
+[Google](https://google.com "google link")
+
+이메일링크: <address@example.com>
+
+*single asterisks*   
+_single underscores_
