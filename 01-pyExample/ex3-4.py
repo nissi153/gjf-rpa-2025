@@ -51,4 +51,30 @@ while True:
 # 3번 송구: 스트라이크  - 2스트라이트 1볼
 # 4번 송구: 스트라이크   -3스트라이크 1볼 - 스트라이크 아웃!
 # 게임끝
+# 게임종료 조건 : 3스크라이크 이거나 4볼이면 종료됩니다.
 
+import random
+
+ball_type = 0  # 0 ball 1 strike
+ball_count = 0
+strike_count = 0
+count = 1 
+while True:
+    ball = random.randint(1, 101) # 1~100까지의 랜덤수
+    if ball <= 70:
+        ball_type = 1 # strike
+    else:
+        ball_type = 0 # ball
+    if ball_type == 1:
+        strike_count += 1
+        print( f"{count}번째 송구: 스트라이크" )
+        if strike_count >= 3:
+            print("스트라이크 아웃!")
+            break
+    else:
+        ball_count += 1
+        print( f"{count}번째 송구: 볼" )
+        if ball_count >= 4:
+            print("볼넷 출루!")
+            break
+    count += 1
