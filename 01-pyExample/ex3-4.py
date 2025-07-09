@@ -9,6 +9,37 @@
 # 오렌지의 잔고는 4개 입니다.
 # 잔고 소진시 "콜라(사이다,오렌지쥬스) 잔고가 떨어졌습니다." 라고 출력하시오.
 
+stock_cola = 3
+stock_cider = 2
+stock_juice = 4
+while True:
+    menu = int( input('콜라(1) 사이다(2) 오렌지쥬스(3): ') )
+    if menu == 1:
+        if stock_cola <= 0:
+            print("콜라 잔고가 떨어졌습니다")
+            continue
+        print("콜라가 나옵니다")
+        stock_cola -= 1
+    elif menu == 2:
+        if stock_cider <= 0:
+            print("사이다 잔고가 떨어졌습니다")
+            continue
+        print("사이다가 나옵니다")
+        stock_cider -= 1
+    elif menu == 3:
+        if stock_juice <= 0:
+            print("오렌지쥬스 잔고가 떨어졌습니다")
+            continue
+        print("오렌지쥬스가 나옵니다")
+        stock_juice -= 1
+    elif menu == 10:
+        print("자판기 프로그램을 종료합니다.")
+        break
+    else:
+        print("메뉴번호를 확인해 주세요~")
+
+
+
 # 연습문제
 # 텍스트 야구게임(무한루프)을 작성하시오.
 # 투수는 공을 던지는데, 스트라이크 확률이 70%이고, 볼 확률이 30%입니다.
