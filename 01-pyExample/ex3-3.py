@@ -37,49 +37,59 @@
 #     print( i )
 
 # 연습문제
-# 1. while문을 이용하여, 1부터 10사이의 짝수만 출력하시오. continue문 사용
-num = 0
-while num < 11:
-    num += 1
-    if num % 2 == 1:
-        continue
-    print(f"{num}")
+# 1. while문을 이용하여, 1부터 10사이의 짝수만 출력하시오. continue문(건너뛰기) 사용
+
+# num = 1
+# while num < 11:
+#     num += 1
+#     if num % 2 == 1:
+#         continue
+#     print( num )
+    
+# 런타임(실행시) 디버거 사용
+# 1. 중단점을 찍는다.
+# 2. 실행 및 디버그 실행
+# 3. F10 으로 Step Over 실행
+
 
 # 2. while문을 이용하여, 1부터 100사이의 2의 배수이면서, 5의 배수인 수를 
 #    모두 출력하시오.
-num = 1
-while num < 101:
-    if num % 2 == 0 and num % 5 == 0:
-        print( num )
-    num += 1
+# num = 1
+# while num < 101:
+#     if num % 2 == 0 and num % 5 == 0:
+#         print( num )
+#     num += 1
 
 # 3. 무한루프를 이용하여, 사용자로부터 정수(1~10사이)를 입력받고,
 #    1~9사이이면, 그 수를 출력하고, 10이면 종료하는 프로그램을 작성하시오.
 # 힌트: break문 사용
-while True:
-    n = int(input("1~10사이의 정수 입력: "))
-    if 0 <= n <= 9:
-        print( n )
-    elif n == 10:
-        print("10 종료!")
-        break
-    else:
-        print("1~10사이의 정수가 아닙니다.")
-print("무한루프 종료")
+# while True:
+#     n = int(input("1~10사이의 정수 입력: "))
+#     if 0 <= n <= 9:
+#         print( n )
+#     elif n == 10:
+#         print("10 종료!")
+#         break
+#     else:
+#         print("1~10사이의 정수가 아닙니다.")
+# print("무한루프 종료")
 
 # 4. 구구단 3단을 출력하는 프로그램을 출력하시오.
 # 3 × 1 = 3
 # 3 × 2 = 6
 # 3 × 3 = 9
 # ...
-for i in range(1, 10):
-    print(f"3 x {i} = {3*i}")
+# for i in range(1, 10):
+#     print(f"3 x {i} = {3*i}")
 
 # 5. while문을 사용하여 사용자가 입력한 숫자의 자릿수를 세어서 출력하시오.
 # 예시:
 # 입력: 12345 → 출력: "5자리 숫자입니다"
 # 입력: 789 → 출력: "3자리 숫자입니다"
 # 힌트: 숫자를 10으로 나누면서 0이 될 때까지 반복
+
+# 123 // 10 = 12 // 10 = 1 // 10 = 0
+
 n = int(input("정수를 입력하세요: "))
 count = 1
 while True:
