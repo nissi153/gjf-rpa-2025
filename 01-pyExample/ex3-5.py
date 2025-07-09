@@ -40,3 +40,8 @@ for i in range(N): # 0~4 5번
 # ***
 # ****
 # *****
+N = 5
+for i in range(N): # 0~4 5번
+    for j in range(i+1):
+        print("*", end="")
+    print()
