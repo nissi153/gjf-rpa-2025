@@ -48,3 +48,14 @@ print( s3 )
 # 요소 삭제
 s3.remove( 3 )
 print( s3 )
+
+# 연습문제
+# 두 반의 학생 중 수학을 좋아하는 사람만 추출
+math = set(["철수", "영희", "민수"])
+science = set(["영희", "지민", "민수"])
+# 수학과 과학 모두 좋아하는 학생을 출력하시오
+print( math & science )
+# 수학 또는 과학 중 한 과목이라도 좋아하는 학생
+print( math | science )
+# 수학은 좋아하지만 과학은 좋아하지 않는 학생
+print( math - science )
