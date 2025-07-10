@@ -17,3 +17,13 @@ print( person ) # {'name': '홍길동', 'age': 30, 'city': '한양'}
 print( person['name'] )
 print( person['age'] )
 print( person['city'] )
+
+print( person.get('name') ) # get함수 이용
+print( person.get('address') ) # None
+print( person.get('address', '주소값 없음') ) # 주소값 없음 (기본값 지정)
+
+dict_a = {}
+dict_a['name'] = '홍길동'
+dict_a['age'] = 30
+print( dict_a )
+
