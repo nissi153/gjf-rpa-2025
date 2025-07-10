@@ -17,7 +17,22 @@ print(set_3)
 list_0 = list( set_0 )
 print( list_0 )
 print( list_0[0] )
+
 # 리스트를 세트로 변경
 list_10 = [10, 20, 30]
 set_10 = set( list_10 )
 print( set_10 )
+
+# 집합연산
+s1 = set([1, 2, 3, 4, 5, 6])
+s2 = set([4, 5, 6, 7, 8, 9])
+# 교집합(공통요소)
+print( s1 & s2 )
+print( s1.intersection(s2) )
+# 합집합(전체요소)
+print( s1 | s2 ) # 세로바 SHIFT + 원
+print( s1.union( s2 ) )
+# 차집합(서로 다른 요소)
+print( s1 - s2 ) # {1, 2, 3}
+print( s2 - s1 ) # {8, 9, 7}
+print( s1.difference( s2 ) ) # {1, 2, 3}
