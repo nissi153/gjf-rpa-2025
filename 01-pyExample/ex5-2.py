@@ -13,6 +13,23 @@
 1~20 숫자 입력: 13
 정답입니다! 3번 만에 맞췄습니다.
 '''
+import random
+number = random.randint(1, 21)
+print( number )
+count = 1
+while True:
+    input_num = int( input('1~20 숫자 입력: ') )
+    if number == input_num:
+        print(f'정답입니다! {count}번째 성공!')
+        break
+    elif number < input_num:
+        print('너무 커요.')
+        count += 1
+        continue
+    else:
+        print('너무 작아요.')
+        count += 1
+        continue
 
 # 종합 연습문제 2
 # 도서 대여 시스템
