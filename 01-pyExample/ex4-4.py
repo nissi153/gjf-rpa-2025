@@ -36,3 +36,15 @@ print( s1.union( s2 ) )
 print( s1 - s2 ) # {1, 2, 3}
 print( s2 - s1 ) # {8, 9, 7}
 print( s1.difference( s2 ) ) # {1, 2, 3}
+
+# 요소 추가
+s3 = set([1, 2])
+s3.add( 3 )
+print( s3 )
+
+s3.update([4, 5, 6])
+print( s3 )
+
+# 요소 삭제
+s3.remove( 3 )
+print( s3 )
