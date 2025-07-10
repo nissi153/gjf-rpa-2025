@@ -14,6 +14,7 @@ person = {
 }
 print( person ) # {'name': '홍길동', 'age': 30, 'city': '한양'}
 
+# 요소 접근(가져오기)
 print( person['name'] )
 print( person['age'] )
 print( person['city'] )
@@ -22,8 +23,27 @@ print( person.get('name') ) # get함수 이용
 print( person.get('address') ) # None
 print( person.get('address', '주소값 없음') ) # 주소값 없음 (기본값 지정)
 
+# 요소 추가
 dict_a = {}
 dict_a['name'] = '홍길동'
 dict_a['age'] = 30
 print( dict_a )
 
+# 요소 삭제
+del dict_a['age']
+print( dict_a )
+
+# 키 목록 가져오기
+person = {
+    "name": "홍길동",
+    "age": 30,
+    "city": "한양"
+}
+print( person.keys() ) # dict_keys 객체
+print( list( person.keys() ) ) # 리스트로 형변환됨.
+
+# in연산자 - 키 존재 여부
+print( 'name' in person )  #True
+
+person.clear() # 전체 삭제
+print( person )
