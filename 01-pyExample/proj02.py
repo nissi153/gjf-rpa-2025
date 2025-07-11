@@ -66,3 +66,9 @@
 - 커피: 5개
 거스름돈 200원이 반환되었습니다.
 '''
+
+class VendingMachine:
+    def __init__(self, money):
+        self.money = money
+
+
