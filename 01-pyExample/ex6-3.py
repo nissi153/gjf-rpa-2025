@@ -5,6 +5,9 @@
 
 # pandas 라이브러리 설치
 # pip install pandas
+# py -m pip install pandas
+
+ # git pull & pip install
 
 import pandas as pd
 
@@ -21,3 +24,9 @@ print( df )
 # CSV 파일로 저장
 df.to_csv("people_pandas.csv", index=False, encoding='utf-8')
 print( "CSV 파일 저장 완료 " )
+
+# pandas로 csv파일 읽어 들이기
+# utf-8-sig : 유니코드 이모지 지원
+df = pd.read_csv("people_pandas.csv", encoding="utf-8-sig")
+print( df )
+print( "CSV 파일 읽기 완료 " )
