@@ -32,5 +32,14 @@ dog.eat()  # 함수 실행
 
 class Cat:
     age = 5 #속성
-    def craw(): #행동
+    def craw(  self ): #행동
         print("햘킨다")
+
+# 연습문제
+# Cat 클래스의 객체를 생성하고,
+# 속성과 행동에 접근하여 출력하시오.
+cat = Cat()
+
+print( cat.age )
+cat.craw() 
+
