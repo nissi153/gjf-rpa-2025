@@ -46,7 +46,14 @@ print( calc.result )
 # 내부변수는 carret_number = 0으로 초기화 하고
 # plant( num )함수를 실행하며, num 수만큼 carret_number가 증가합니다.
 # 당근을 10개 생산하고 현재 공근의 당근갯수를 출력하시오
+class Farm:
+    carret_number = 0
+    def plant( self, num ):
+        self.carret_number += num
 
+farm = Farm()
+farm.plant( 10 )
+print( farm.carret_number )
 
 
 
