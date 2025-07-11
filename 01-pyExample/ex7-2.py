@@ -39,3 +39,14 @@ calc.sub( 10 )
 print( calc.result )
 calc.sub( 10 )
 print( calc.result )
+
+# 연습문제
+# 당근농장을 클래스로 구현해 봅니다.
+# 클래스이름 Farm이라고 하고,
+# 내부변수는 carret_number = 0으로 초기화 하고
+# plant( num )함수를 실행하며, num 수만큼 carret_number가 증가합니다.
+# 당근을 10개 생산하고 현재 공근의 당근갯수를 출력하시오
+
+
+
+
