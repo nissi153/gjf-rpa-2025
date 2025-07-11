@@ -16,3 +16,19 @@ while True:
         break
     print( line )
 f.close()
+
+f = open("test1.txt", 'r', encoding='utf-8')
+lines = f.readlines()
+for line in lines:
+    print( line.strip() ) # strip() 좌우 공배 제거
+f.close()
+
+# 파일 내용 추가
+f = open("test1.txt", "a", encoding='utf-8')
+f.write("\n추가된 내용입니다.\n")
+f.close()
+
+# with문 사용 : close()함수 생략 가능
+with open("test1.txt", "a", encoding='utf-8') as f:
+    f.write("추가된 내용입니다.2\n")
+# with문 종료시 자동으로 close()호출됨.
