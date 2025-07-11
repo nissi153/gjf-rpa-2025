@@ -31,3 +31,47 @@
 선택하세요 (1-5): 5
 프로그램을 종료합니다.
 """
+
+class Calulator:
+    def __init__(self):
+        pass
+    def add(self, x, y ):
+        return x + y
+    def sub(self, x, y ):
+        return x - y
+    def mul(self, x, y ):
+        return x * y
+    def div(self, x, y ):
+        if y == 0:
+            return 0
+        return x / y
+
+if __name__ == "__main__":
+    calc = Calulator()
+
+    print('''
+=== 간단한 계산기 ===
+1. 덧셈
+2. 뺄셈
+3. 곱셈
+4. 나눗셈
+5. 종료
+
+선택하세요 (1-5):
+''')
+    menu = int(input(""))
+    num1 = int(input("첫번째 숫자: "))
+    num2 = int(input("두번째 숫자: "))
+
+    if menu == 1:
+        result = Calulator().add(num1, num2)
+        print( f"결과: {num1} + {num2} = {result}" )
+    elif menu == 2:
+        result = Calulator().sub(num1, num2)
+        print( f"결과: {num1} - {num2} = {result}" )
+    elif menu == 3:
+        result = Calulator().mul(num1, num2)
+        print( f"결과: {num1} * {num2} = {result}" )
+    elif menu == 4:
+        result = Calulator().div(num1, num2)
+        print( f"결과: {num1} / {num2} = {result}" )    
