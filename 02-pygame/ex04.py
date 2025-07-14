@@ -16,6 +16,8 @@ px, py = 100, 100
 ex, ey = 300, 200
 speed = 5
 
+# 프레임 Frame Per Second : 초당 화면 장수, 30프레임 이하 끊김현상.
+
 # 반짝거림 효과 변수
 blink_timer = 0
 blink_duration = 60  # 1초간 반짝거림 (60프레임)
