@@ -70,7 +70,7 @@
 class VendingMachine:
     def __init__(self):
         # 상품 정보 (이름, 가격, 재고)
-        self.products = {
+        self.products = {  # 딕셔너리 - 키가 숫자인 경우, 값도 Dict
             1: {"name": "콜라", "price": 1500, "stock": 10},
             2: {"name": "사이다", "price": 1300, "stock": 8},
             3: {"name": "커피", "price": 2000, "stock": 5}

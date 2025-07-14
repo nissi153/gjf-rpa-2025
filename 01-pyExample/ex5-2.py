@@ -64,7 +64,7 @@
 
 # 도서 대여 시스템 구현
 class LibrarySystem:
-    def __init__(self):
+    def __init__(self): #생성자함수 
         my_library = {
             "대여" : ["HTML기초", "JS기초"],
             "반납" : ["파이썬기초", "CSS기초"]
