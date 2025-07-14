@@ -7,6 +7,8 @@ pygame.display.set_caption("이미지 표시하기")
 
 # 이미지 로드 (같은 폴더에 'character.png'가 있어야 함)
 character = pygame.image.load("./02-pygame/character.png")
+# character = pygame.image.load("./character.png")
+
 # 캐릭터 사이즈를 작게 조절 (원본의 1/5 크기로)
 character = pygame.transform.scale(character, (character.get_width() // 5, character.get_height() // 5))
 
