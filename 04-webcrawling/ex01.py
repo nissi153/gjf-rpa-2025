@@ -11,3 +11,8 @@ url = "https://www.naver.com"
 response = requests.get(url)
 
 print( response.text )
+
+# pip install requests
+# 관리자 권한으로 콘솔 열기 
+# py -m pip install requests
+# python.exe -m pip install --upgrade pip
