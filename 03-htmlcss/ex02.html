@@ -3,6 +3,11 @@
     <!-- lang="en" 문서의 정보가 주로 영어이다. ko 한글 jp 일본어 -->
 <head>
     <title>HTML 여러 태그들</title>
+    <style>
+        div, span {
+            border: 5px solid red;
+        }
+    </style>
 </head>
 <body>
     <h1>제목 태그 H1</h1>
@@ -27,7 +32,8 @@
     </ul>
     <!-- 수평선 -->
     <hr>
-     <!-- 내용은 없고, 포장만 하는 박스태그  -->
+    <!-- 내용은 없고, 포장만 하는 박스태그  -->
+    <!-- div 한줄차지 span 한칸차지 -->
     <div>
         <a href="">링크1</a>
         <a href="">링크2</a>
@@ -36,5 +42,25 @@
         <a href="">링크1</a>
         <a href="">링크2</a>
     </span>
+    <hr>
+    <table border="1">
+        <!-- tr row : 한줄 -->
+        <tr>
+            <!-- td : data 데이터셀 -->
+            <td>번호</td>
+            <td>이름</td>
+            <td>주소</td>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>홍길동</td>
+            <td>한양</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>사임당</td>
+            <td>수원</td>
+        </tr>
+    </table>
 </body>
 </html>
