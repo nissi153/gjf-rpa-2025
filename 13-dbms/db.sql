@@ -140,6 +140,51 @@ WHERE name like '%길%' or name like '%정%';
 
 SELECT * FROM student;
 
+-- 집계함수(GROUP BY, HAVING절(조건))
+-- 학년별 학생수 구하기(COUNT()함수)
+SELECT grade, COUNT(*) as 학년별_학생수 
+FROM student
+GROUP by grade;
+
+-- 학년별 평균 나이 구하기(AVG)
+SELECT grade, AVG(age) as 학년별_평균나이
+FROM student
+GROUP by grade;
+
+-- 학년별 총 나이 합계 구하기(SUM)
+SELECT grade, SUM(age) as 학년별_나이합계
+FROM student
+GROUP by grade;
+
+-- group(집계)에 대한 조건을 넣을때, having절
+-- 학년별 학생수가 2명 이상인 학년만 조회
+SELECT grade, count(*)
+FROM student
+GROUP by grade
+HAVING count(*) >= 2;
+
+-- 집계함수는 where절에 사용불가
+SELECT grade, count(*)
+FROM student
+where count(*) >= 2
+GROUP by grade;
+
+-- 집계함수의 종류
+-- count, sum, avg, min, max
+
+-- 연습문제
+-- 1. 학년별 평균 나이가 30세 이상인 학년만 조회하시오.
+SELECT grade, avg(age) as 학년별_평균나이
+FROM student
+GROUP by grade
+having avg(age) >= 30;
+-- 2. 각 학년에서 가장 나이 많은 학생의 나이를 구하시오.
+SELECT grade, max(age) as 가장나이많은학생
+FROM student
+GROUP by grade;
+
+-- 서브쿼리(Sub Query) - select문 안에 select문이 있는 구문
+-- 조인(Join) - 테이블 2개 이상에서 조회
 
 
 
