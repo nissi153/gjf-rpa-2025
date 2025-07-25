@@ -6,10 +6,11 @@ Supabase 기초 CRUD 예제
 - Delete: 데이터 삭제
 """
 
-import os
 from supabase import create_client, Client
 from datetime import datetime
 import json
+
+import os
 from dotenv import load_dotenv
 
 load_dotenv()
