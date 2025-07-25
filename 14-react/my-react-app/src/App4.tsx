@@ -1,12 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { createClient } from "@supabase/supabase-js";
+import "./App.css";
 
-// Supabase 클라이언트 설정 (실제 사용시 환경변수로 관리)
-const SUPABASE_URL = "https://wkerxfnyisrnikgekkny.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_Z9S9b5LBIApWcJvSE0c6WA_KWTMdeRP";
-
-// 실제 Supabase 클라이언트 생성
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+import React, { useState } from "react";
 
 interface Course {
   id: string;
@@ -19,81 +13,107 @@ interface Course {
 }
 
 const App: React.FC = () => {
-  const [availableCourses, setAvailableCourses] = useState<Course[]>([]);
+  // 개설 과목 데이터
+  const [availableCourses] = useState<Course[]>([
+    {
+      id: "CS101",
+      name: "프로그래밍 기초",
+      professor: "김교수",
+      credits: 3,
+      time: "월수금 10:00-11:00",
+      capacity: 50,
+      enrolled: 35,
+    },
+    {
+      id: "CS201",
+      name: "자료구조",
+      professor: "이교수",
+      credits: 3,
+      time: "화목 13:00-14:30",
+      capacity: 40,
+      enrolled: 28,
+    },
+    {
+      id: "CS301",
+      name: "데이터베이스",
+      professor: "박교수",
+      credits: 3,
+      time: "월수 15:00-16:30",
+      capacity: 35,
+      enrolled: 32,
+    },
+    {
+      id: "MATH101",
+      name: "미적분학",
+      professor: "최교수",
+      credits: 3,
+      time: "화목금 09:00-10:00",
+      capacity: 60,
+      enrolled: 45,
+    },
+    {
+      id: "ENG101",
+      name: "영어회화",
+      professor: "Smith",
+      credits: 2,
+      time: "월수 11:00-12:00",
+      capacity: 25,
+      enrolled: 20,
+    },
+    {
+      id: "PHYS101",
+      name: "일반물리학",
+      professor: "정교수",
+      credits: 3,
+      time: "화목 10:00-11:30",
+      capacity: 45,
+      enrolled: 38,
+    },
+    {
+      id: "CHEM101",
+      name: "일반화학",
+      professor: "한교수",
+      credits: 3,
+      time: "월수금 14:00-15:00",
+      capacity: 40,
+      enrolled: 25,
+    },
+    {
+      id: "BIO101",
+      name: "생물학개론",
+      professor: "윤교수",
+      credits: 3,
+      time: "화목 16:00-17:30",
+      capacity: 30,
+      enrolled: 22,
+    },
+    {
+      id: "HIST101",
+      name: "한국사",
+      professor: "강교수",
+      credits: 2,
+      time: "금 13:00-15:00",
+      capacity: 80,
+      enrolled: 60,
+    },
+    {
+      id: "ART101",
+      name: "미술의 이해",
+      professor: "조교수",
+      credits: 2,
+      time: "목 15:00-17:00",
+      capacity: 20,
+      enrolled: 15,
+    },
+  ]);
+
+  // 신청한 과목들
   const [registeredCourses, setRegisteredCourses] = useState<Course[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [studentId] = useState("student123"); // 실제로는 로그인 시스템에서 가져옴
 
   const MAX_COURSES = 8;
 
-  // 데이터 로드
-  useEffect(() => {
-    loadCourses();
-    loadRegistrations();
-    setupRealtimeSubscription();
-  }, []);
-
-  const loadCourses = async () => {
-    try {
-      const { data, error } = await supabase.from("courses").select("*");
-
-      if (error) throw error;
-      setAvailableCourses(data || []);
-    } catch (error) {
-      console.error("과목 데이터 로드 실패:", error);
-    }
-  };
-
-  const loadRegistrations = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("registrations")
-        .select(
-          `
-          *,
-          courses (*)
-        `
-        )
-        .eq("student_id", studentId);
-
-      if (error) throw error;
-
-      const registered = (data || []).map((reg) => reg.courses);
-      setRegisteredCourses(registered);
-    } catch (error) {
-      console.error("신청 과목 로드 실패:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // 실시간 업데이트 구독
-  const setupRealtimeSubscription = () => {
-    const subscription = supabase
-      .channel("course-changes")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "courses" },
-        () => {
-          loadCourses();
-        }
-      )
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "registrations" },
-        () => {
-          loadRegistrations();
-        }
-      )
-      .subscribe();
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  };
-
-  // 수강신청
-  const registerCourse = async (course: Course) => {
+  // 수강신청 함수
+  const registerCourse = (course: Course) => {
     if (registeredCourses.length >= MAX_COURSES) {
       alert(`최대 ${MAX_COURSES}개 과목까지만 신청 가능합니다.`);
       return;
@@ -109,84 +129,15 @@ const App: React.FC = () => {
       return;
     }
 
-    try {
-      setLoading(true);
-
-      // 신청 테이블에 추가
-      const { error: regError } = await supabase.from("registrations").insert({
-        student_id: studentId,
-        course_id: course.id,
-      });
-
-      if (regError) throw regError;
-
-      // 수강인원 증가
-      const { error: courseError } = await supabase
-        .from("courses")
-        .update({ enrolled: course.enrolled + 1 })
-        .eq("id", course.id);
-
-      if (courseError) throw courseError;
-
-      // 로컬 상태 업데이트
-      setRegisteredCourses([...registeredCourses, course]);
-      setAvailableCourses(
-        availableCourses.map((c) =>
-          c.id === course.id ? { ...c, enrolled: c.enrolled + 1 } : c
-        )
-      );
-
-      alert("수강신청이 완료되었습니다.");
-    } catch (error) {
-      console.error("수강신청 실패:", error);
-      alert("수강신청에 실패했습니다.");
-    } finally {
-      setLoading(false);
-    }
+    setRegisteredCourses([...registeredCourses, course]);
   };
 
-  // 수강신청 취소
-  const cancelCourse = async (courseId: string) => {
-    try {
-      setLoading(true);
-
-      // 신청 테이블에서 삭제
-      const { error: regError } = await supabase
-        .from("registrations")
-        .delete()
-        .eq("student_id", studentId)
-        .eq("course_id", courseId);
-
-      if (regError) throw regError;
-
-      // 수강인원 감소
-      const course = availableCourses.find((c) => c.id === courseId);
-      if (course) {
-        const { error: courseError } = await supabase
-          .from("courses")
-          .update({ enrolled: course.enrolled - 1 })
-          .eq("id", courseId);
-
-        if (courseError) throw courseError;
-      }
-
-      // 로컬 상태 업데이트
-      setRegisteredCourses(registeredCourses.filter((c) => c.id !== courseId));
-      setAvailableCourses(
-        availableCourses.map((c) =>
-          c.id === courseId ? { ...c, enrolled: c.enrolled - 1 } : c
-        )
-      );
-
-      alert("수강신청이 취소되었습니다.");
-    } catch (error) {
-      console.error("수강신청 취소 실패:", error);
-      alert("수강신청 취소에 실패했습니다.");
-    } finally {
-      setLoading(false);
-    }
+  // 수강신청 취소 함수
+  const cancelCourse = (courseId: string) => {
+    setRegisteredCourses(registeredCourses.filter((c) => c.id !== courseId));
   };
 
+  // 총 학점 계산
   const totalCredits = registeredCourses.reduce(
     (sum, course) => sum + course.credits,
     0
@@ -205,15 +156,6 @@ const App: React.FC = () => {
       fontWeight: "bold",
       marginBottom: "30px",
       color: "#333",
-    },
-    setupNotice: {
-      backgroundColor: "#fff3cd",
-      border: "1px solid #ffeaa7",
-      borderRadius: "8px",
-      padding: "15px",
-      marginBottom: "20px",
-      fontSize: "14px",
-      color: "#856404",
     },
     statusBox: {
       backgroundColor: "white",
@@ -237,6 +179,9 @@ const App: React.FC = () => {
       display: "grid",
       gridTemplateColumns: "1fr 1fr",
       gap: "20px",
+      "@media (max-width: 768px)": {
+        gridTemplateColumns: "1fr",
+      },
     },
     sectionBox: {
       backgroundColor: "white",
@@ -280,7 +225,9 @@ const App: React.FC = () => {
     },
     tr: {
       cursor: "pointer",
-      opacity: loading ? 0.7 : 1,
+    },
+    trHover: {
+      backgroundColor: "#f8f9fa",
     },
     button: {
       padding: "5px 12px",
@@ -289,11 +236,13 @@ const App: React.FC = () => {
       fontSize: "12px",
       cursor: "pointer",
       fontWeight: "500",
-      disabled: loading,
     },
     registerButton: {
       backgroundColor: "#007bff",
       color: "white",
+    },
+    registerButtonHover: {
+      backgroundColor: "#0056b3",
     },
     disabledButton: {
       backgroundColor: "#ccc",
@@ -303,6 +252,9 @@ const App: React.FC = () => {
     cancelButton: {
       backgroundColor: "#dc3545",
       color: "white",
+    },
+    cancelButtonHover: {
+      backgroundColor: "#c82333",
     },
     enrollmentFull: {
       color: "#dc3545",
@@ -322,61 +274,11 @@ const App: React.FC = () => {
     greenText: {
       color: "#28a745",
     },
-    loadingOverlay: {
-      position: "fixed" as const,
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundColor: "rgba(0,0,0,0.3)",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      zIndex: 1000,
-    },
-    loadingSpinner: {
-      width: "40px",
-      height: "40px",
-      border: "4px solid #f3f3f3",
-      borderTop: "4px solid #007bff",
-      borderRadius: "50%",
-      animation: "spin 1s linear infinite",
-    },
   };
-
-  if (loading && availableCourses.length === 0) {
-    return (
-      <div style={styles.container}>
-        <div style={styles.loadingOverlay}>
-          <div style={styles.loadingSpinner}></div>
-        </div>
-        <h1 style={styles.header}>데이터 로딩 중...</h1>
-      </div>
-    );
-  }
 
   return (
     <div style={styles.container}>
-      <style>
-        {`
-          @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-          }
-        `}
-      </style>
-
-      <h1 style={styles.header}>수강신청 시스템 (Supabase 연동)</h1>
-
-      <div style={styles.setupNotice}>
-        <strong>📋 Supabase 데이터베이스 연결됨:</strong>
-        <br />
-        ✅ 실제 Supabase 데이터베이스에 연결되어 있습니다.
-        <br />
-        📊 필요한 테이블: courses (과목), registrations (수강신청)
-        <br />
-        🔄 실시간 업데이트가 활성화되어 있습니다.
-      </div>
+      <h1 style={styles.header}>수강신청 시스템</h1>
 
       {/* 신청 현황 */}
       <div style={styles.statusBox}>
@@ -386,7 +288,6 @@ const App: React.FC = () => {
             신청 과목: {registeredCourses.length}/{MAX_COURSES}개
           </span>
           <span style={styles.greenText}>총 학점: {totalCredits}학점</span>
-          <span>학생 ID: {studentId}</span>
         </div>
       </div>
 
@@ -438,23 +339,29 @@ const App: React.FC = () => {
                     <button
                       onClick={() => registerCourse(course)}
                       disabled={
-                        loading ||
-                        !!registeredCourses.find((c) => c.id === course.id) ||
+                        registeredCourses.find((c) => c.id === course.id) ||
                         course.enrolled >= course.capacity
                       }
                       style={{
                         ...styles.button,
-                        ...(loading ||
-                        registeredCourses.find((c) => c.id === course.id) ||
+                        ...(registeredCourses.find((c) => c.id === course.id) ||
                         course.enrolled >= course.capacity
                           ? styles.disabledButton
                           : styles.registerButton),
                       }}
+                      onMouseEnter={(e) => {
+                        if (!e.currentTarget.disabled) {
+                          e.currentTarget.style.backgroundColor = "#0056b3";
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (!e.currentTarget.disabled) {
+                          e.currentTarget.style.backgroundColor = "#007bff";
+                        }
+                      }}
                     >
                       {registeredCourses.find((c) => c.id === course.id)
                         ? "신청완료"
-                        : loading
-                        ? "처리중..."
                         : "신청"}
                     </button>
                   </td>
@@ -501,15 +408,15 @@ const App: React.FC = () => {
                     <td style={styles.tdCenter}>
                       <button
                         onClick={() => cancelCourse(course.id)}
-                        disabled={loading}
-                        style={{
-                          ...styles.button,
-                          ...(loading
-                            ? styles.disabledButton
-                            : styles.cancelButton),
-                        }}
+                        style={{ ...styles.button, ...styles.cancelButton }}
+                        onMouseEnter={(e) =>
+                          (e.currentTarget.style.backgroundColor = "#c82333")
+                        }
+                        onMouseLeave={(e) =>
+                          (e.currentTarget.style.backgroundColor = "#dc3545")
+                        }
                       >
-                        {loading ? "처리중..." : "취소"}
+                        취소
                       </button>
                     </td>
                   </tr>
