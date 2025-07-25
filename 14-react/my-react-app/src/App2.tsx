@@ -1,10 +1,9 @@
 import "./App.css";
-import MyCard from "./MyCard";
 
 function App() {
   return (
     <>
-      <MyCard></MyCard>
+      <h1>첫 리액트 앱 입니다.</h1>
     </>
   );
 }
