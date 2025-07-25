@@ -176,28 +176,28 @@ def main():
     print("\n2. 모든 학생 조회 (READ)")
     read_all_students()
     
-    # # 4. 특정 학생 조회 (READ)
-    # print("\n3. 특정 학생 조회 (READ)")
-    # read_student_by_id(id1)
+    # 4. 특정 학생 조회 (READ)
+    print("\n3. 특정 학생 조회 (READ)")
+    read_student_by_id(3)
     
-    # # 5. 학생 정보 수정 (UPDATE)
-    # print("\n4. 학생 정보 수정 (UPDATE)")
-    # update_student(id2, age=20, grade="2학년")
-    # read_student_by_id(id2)
+    # 5. 학생 정보 수정 (UPDATE)
+    print("\n4. 학생 정보 수정 (UPDATE)")
+    update_student(2, age=20, grade="2학년")
+    read_student_by_id(2)
     
-    # # 6. 이름으로 학생 검색 (READ - 조건부)
-    # print("\n5. 이름으로 학생 검색")
-    # search_students_by_name("김")
+    # 6. 이름으로 학생 검색 (READ - 조건부)
+    print("\n5. 이름으로 학생 검색")
+    search_students_by_name("김")
     
-    # # 7. 학생 정보 삭제 (DELETE)
-    # print("\n6. 학생 정보 삭제 (DELETE)")
-    # delete_student(id3)
+    # 7. 학생 정보 삭제 (DELETE)
+    print("\n6. 학생 정보 삭제 (DELETE)")
+    delete_student(3)
     
-    # # 8. 삭제 후 전체 목록 확인
-    # print("\n7. 삭제 후 전체 목록 확인")
-    # read_all_students()
+    # 8. 삭제 후 전체 목록 확인
+    print("\n7. 삭제 후 전체 목록 확인")
+    read_all_students()
     
-    # print("\nSQLite CRUD 예제 완료")
+    print("\nSQLite CRUD 예제 완료")
 
 if __name__ == "__main__":
     main()
