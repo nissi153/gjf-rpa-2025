@@ -3,7 +3,7 @@ import pyperclip
 import time
 
 # === 설정값 ===
-friend_name = "곽다윗"  # 메시지를 보낼 친구 이름
+friend_name = "홍길동"  # 메시지를 보낼 친구 이름
 message = "안녕! 자동화로 보낸 메시지야 😄"
 
 # === Step 1. 카카오톡 창 활성화 ===
