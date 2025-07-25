@@ -3,7 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 
 // Supabase 클라이언트 설정 (실제 사용시 환경변수로 관리)
 const SUPABASE_URL = "https://wkerxfnyisrnikgekkny.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_Z9S9b5LBIApWcJvSE0c6WA_KWTMdeRP";
+const SUPABASE_ANON_KEY = "=";
 
 // 실제 Supabase 클라이언트 생성
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
