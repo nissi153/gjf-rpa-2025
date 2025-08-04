@@ -4,9 +4,9 @@ load_dotenv()
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage
 
-chat_model = ChatOpenAI()
+chat_model = ChatOpenAI(model="gpt-4o-mini")
 
-content = "코딩"
+content = "여름"
 
 # invoke 방식으로 더 자세한 정보 확인
 result = chat_model.invoke([HumanMessage(content=content + "에 대한 시를 써줘")])
