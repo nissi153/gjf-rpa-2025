@@ -1,5 +1,6 @@
 from dotenv import load_dotenv
 load_dotenv()
+# OPENAI_API_KEY은 랭체인의 예약어이다.
 
 # 최신 방식 - Warning 없음
 from langchain_openai import ChatOpenAI
