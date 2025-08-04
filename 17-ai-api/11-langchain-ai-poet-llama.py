@@ -2,7 +2,7 @@ import streamlit as st
 from langchain_community.llms import CTransformers
 
 # pip install langchain-community ctransformers
-# https://huggingface.co/TheBloke/Llama-2-7B-Chat-GGML
+# https://huggingface.co/TheBloke/Llama-2-7B-Chat-GGML/blob/main/llama-2-7b-chat.ggmlv3.q2_K.bin
 
 llm = CTransformers(
     model="TheBloke/Llama-2-7B-Chat-GGML",

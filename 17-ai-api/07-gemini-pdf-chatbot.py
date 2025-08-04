@@ -16,6 +16,11 @@ genai.configure(api_key=API_KEY)
 # PDF 파일을 Gemini에 업로드하는 함수
 def upload_pdf_file(pdf_file):
     try:
+        
+# API	파일 업로드 방식	Streamlit 호환성
+# OpenAI	client.files.create(file=pdf_file)	✅ 직접 사용 가능
+# Gemini	genai.upload_file("file_path")	❌ 경로만 받음
+
         # 임시 파일로 저장
         with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp_file:
             tmp_file.write(pdf_file.getvalue())
