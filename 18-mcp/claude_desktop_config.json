@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "fastmcp-hello": {
+      "command": "python",
+      "args": [
+        "C:/Users/user/Documents/GitHub/gjf-rpa-2025/18-mcp/fastmcp_server.py"
+      ],
+      "env": {
+        "PYTHONIOENCODING": "utf-8",
+        "PYTHONUNBUFFERED": "1"
+      }
+    }
+  }
+}
