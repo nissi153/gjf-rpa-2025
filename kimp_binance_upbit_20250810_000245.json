@@ -1,0 +1,101 @@
+[
+  {
+    "timestamp": "2025-08-10 00:02:44",
+    "crypto_name": "AVAX",
+    "binance_usd": 24.36,
+    "binance_krw": 33848.22,
+    "upbit_krw": 33460.0,
+    "kimp_rate": -1.15,
+    "binance_change_24h": 4.103,
+    "upbit_change_24h": 2.48085758,
+    "usd_krw_rate": 1389.5
+  },
+  {
+    "timestamp": "2025-08-10 00:02:44",
+    "crypto_name": "ETH",
+    "binance_usd": 4222.26,
+    "binance_krw": 5866830.2700000005,
+    "upbit_krw": 5793000.0,
+    "kimp_rate": -1.26,
+    "binance_change_24h": 6.091,
+    "upbit_change_24h": 5.4806992,
+    "usd_krw_rate": 1389.5
+  },
+  {
+    "timestamp": "2025-08-10 00:02:44",
+    "crypto_name": "XRP",
+    "binance_usd": 3.2951,
+    "binance_krw": 4578.541450000001,
+    "upbit_krw": 4521.0,
+    "kimp_rate": -1.26,
+    "binance_change_24h": 0.522,
+    "upbit_change_24h": 0.39973351,
+    "usd_krw_rate": 1389.5
+  },
+  {
+    "timestamp": "2025-08-10 00:02:44",
+    "crypto_name": "ADA",
+    "binance_usd": 0.8106,
+    "binance_krw": 1126.3287,
+    "upbit_krw": 1112.0,
+    "kimp_rate": -1.27,
+    "binance_change_24h": 2.673,
+    "upbit_change_24h": 2.48847926,
+    "usd_krw_rate": 1389.5
+  },
+  {
+    "timestamp": "2025-08-10 00:02:44",
+    "crypto_name": "SOL",
+    "binance_usd": 181.59,
+    "binance_krw": 252319.305,
+    "upbit_krw": 249100.0,
+    "kimp_rate": -1.28,
+    "binance_change_24h": 2.855,
+    "upbit_change_24h": 2.8064383,
+    "usd_krw_rate": 1389.5
+  },
+  {
+    "timestamp": "2025-08-10 00:02:44",
+    "crypto_name": "LINK",
+    "binance_usd": 21.36,
+    "binance_krw": 29679.719999999998,
+    "upbit_krw": 29300.0,
+    "kimp_rate": -1.28,
+    "binance_change_24h": 10.16,
+    "upbit_change_24h": 7.36533529,
+    "usd_krw_rate": 1389.5
+  },
+  {
+    "timestamp": "2025-08-10 00:02:44",
+    "crypto_name": "BTC",
+    "binance_usd": 117020.0,
+    "binance_krw": 162599290.0,
+    "upbit_krw": 160499000.0,
+    "kimp_rate": -1.29,
+    "binance_change_24h": 0.484,
+    "upbit_change_24h": 0.24984541,
+    "usd_krw_rate": 1389.5
+  },
+  {
+    "timestamp": "2025-08-10 00:02:44",
+    "crypto_name": "DOT",
+    "binance_usd": 4.101,
+    "binance_krw": 5698.3395,
+    "upbit_krw": 5625.0,
+    "kimp_rate": -1.29,
+    "binance_change_24h": 4.671,
+    "upbit_change_24h": 3.02197802,
+    "usd_krw_rate": 1389.5
+  },
+  {
+    "timestamp": "2025-08-10 00:02:44",
+    "crypto_name": "ATOM",
+    "binance_usd": 4.746,
+    "binance_krw": 6594.567000000001,
+    "upbit_krw": 6500.0,
+    "kimp_rate": -1.43,
+    "binance_change_24h": 3.466,
+    "upbit_change_24h": 3.0110935,
+    "usd_krw_rate": 1389.5
+  }
+]
