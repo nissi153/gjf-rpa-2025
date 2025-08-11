@@ -1,0 +1,165 @@
+{
+  "name": "2. 날씨 알리미",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -240,
+        -112
+      ],
+      "id": "935d58ef-35fe-4e48-b934-76dd71c19442",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "cityName": "seoul"
+      },
+      "type": "n8n-nodes-base.openWeatherMap",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        -112
+      ],
+      "id": "43a5c082-25e2-4cd7-b54e-235607394af5",
+      "name": "OpenWeatherMap",
+      "credentials": {
+        "openWeatherMapApi": {
+          "id": "HQDM9ZRPHryGVLQW",
+          "name": "OpenWeatherMap account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1xmWAlV1B-RtrX6WD_RXiuFQNIS0Z94thf9ZpLDzsi6Y",
+          "mode": "list",
+          "cachedResultName": "1-서울날씨",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xmWAlV1B-RtrX6WD_RXiuFQNIS0Z94thf9ZpLDzsi6Y/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "시트1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1xmWAlV1B-RtrX6WD_RXiuFQNIS0Z94thf9ZpLDzsi6Y/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "시간": "={{ $now }}",
+            "기온": "={{ $json.main.temp }}",
+            "습도": "={{ $json.main.humidity }}",
+            "상태": "={{ $json.weather[0].main }}",
+            "아이콘": "=https://openweathermap.org/img/wn/{{ $json.weather[0].icon }}.png"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "시간",
+              "displayName": "시간",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "기온",
+              "displayName": "기온",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "습도",
+              "displayName": "습도",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "상태",
+              "displayName": "상태",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "아이콘",
+              "displayName": "아이콘",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        176,
+        -112
+      ],
+      "id": "cea99443-7ee7-4200-8702-538c2d1fb0f2",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "UedxZaMrLOWo4pCQ",
+          "name": "Google Sheets account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "OpenWeatherMap",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenWeatherMap": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "bf22ace1-204c-49f4-b7c4-2f97519a4bfd",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b7677542f30a1fd6c4c70a150414e98931044fc4dfd46655e6a9105a3cb936e6"
+  },
+  "id": "jCKAQPIPSpcOlf1j",
+  "tags": []
+}
