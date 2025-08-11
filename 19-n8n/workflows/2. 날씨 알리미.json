@@ -6,8 +6,8 @@
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        -240,
-        -112
+        -464,
+        -128
       ],
       "id": "935d58ef-35fe-4e48-b934-76dd71c19442",
       "name": "When clicking ‘Execute workflow’"
@@ -19,8 +19,8 @@
       "type": "n8n-nodes-base.openWeatherMap",
       "typeVersion": 1,
       "position": [
-        -32,
-        -112
+        -256,
+        -128
       ],
       "id": "43a5c082-25e2-4cd7-b54e-235607394af5",
       "name": "OpenWeatherMap",
@@ -113,8 +113,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.6,
       "position": [
-        176,
-        -112
+        160,
+        -288
       ],
       "id": "cea99443-7ee7-4200-8702-538c2d1fb0f2",
       "name": "Append row in sheet",
@@ -124,9 +124,288 @@
           "name": "Google Sheets account 2"
         }
       }
+    },
+    {
+      "parameters": {
+        "content": "## 다양한 곳에 전달 가능",
+        "height": 592,
+        "width": 640
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -112,
+        -368
+      ],
+      "id": "8aaa24c9-549c-4acd-8c6d-5162800d5ad0",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "6ecd5f75-7dd5-434d-aa58-6fd08b1676ed"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -64,
+        -128
+      ],
+      "id": "6b647bee-e844-4b2a-a4e8-cfb5d037704d",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "sendTo": "nissisoft21@gmail.com",
+        "subject": "=현재 {{ $json.name }}의 날씨",
+        "emailType": "text",
+        "message": "=기온: {{ $json.main.temp }}   습도:  {{ $json.main.humidity }}  ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        160,
+        -128
+      ],
+      "id": "c05663a7-6cb7-4a57-b140-412af81806e4",
+      "name": "Send a message",
+      "webhookId": "a123d747-9b9e-459a-978a-bf4dc5668deb",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Z9xqG2FmNKsPBjRq",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0996CSV7RC",
+          "mode": "list",
+          "cachedResultName": "소셜"
+        },
+        "text": "=현재 {{ $json.name }}날씨 : 기온 {{ $json.main.temp }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        160,
+        32
+      ],
+      "id": "8c770524-cd4f-4dbf-b69d-3badbb78916f",
+      "name": "Send a message1",
+      "webhookId": "b926abb6-91bf-4035-8428-edcbda2314de",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "5nMvgQzULi9y9GTs",
+          "name": "Slack account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "webhook",
+        "content": "=기온 {{ $json.main.temp }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        384,
+        -288
+      ],
+      "id": "ef75010e-78bb-49e8-aee2-0a475a737fe1",
+      "name": "Discord",
+      "webhookId": "fc339575-c850-462c-a9d8-2587ea35603e",
+      "credentials": {
+        "discordWebhookApi": {
+          "id": "mRduYzgsF049TNjf",
+          "name": "Discord Webhook account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        384,
+        -128
+      ],
+      "id": "7af659ac-1718-4f59-a76e-24191238211b",
+      "name": "Send a text message",
+      "webhookId": "473123ba-f6a8-4b17-85eb-ff6d1f84aca5",
+      "credentials": {
+        "telegramApi": {
+          "id": "EhVdjHB6q35ZKHmp",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "block",
+        "blockId": {
+          "__rl": true,
+          "value": "https://www.notion.so/codinggangsa/MCP-23e5faaa3404807e9ab9e7ade2529a83?source=copy_link",
+          "mode": "url"
+        },
+        "blockUi": {
+          "blockValues": [
+            {
+              "textContent": "= 기온 : {{ $json.main.temp }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        384,
+        64
+      ],
+      "id": "3cdd7322-8053-4a53-aa50-032a4d409c7a",
+      "name": "Append a block",
+      "credentials": {
+        "notionApi": {
+          "id": "2yK9iuvVCbjxn6Na",
+          "name": "Notion account"
+        }
+      }
     }
   ],
-  "pinData": {},
+  "pinData": {
+    "OpenWeatherMap": [
+      {
+        "json": {
+          "coord": {
+            "lon": 126.9778,
+            "lat": 37.5683
+          },
+          "weather": [
+            {
+              "id": 803,
+              "main": "Clouds",
+              "description": "broken clouds",
+              "icon": "04d"
+            }
+          ],
+          "base": "stations",
+          "main": {
+            "temp": 28.76,
+            "feels_like": 32.92,
+            "temp_min": 27.78,
+            "temp_max": 28.76,
+            "pressure": 1004,
+            "humidity": 74,
+            "sea_level": 1004,
+            "grnd_level": 994
+          },
+          "visibility": 10000,
+          "wind": {
+            "speed": 2.57,
+            "deg": 180
+          },
+          "clouds": {
+            "all": 75
+          },
+          "dt": 1754895995,
+          "sys": {
+            "type": 1,
+            "id": 8105,
+            "country": "KR",
+            "sunrise": 1754858658,
+            "sunset": 1754908231
+          },
+          "timezone": 32400,
+          "id": 1835848,
+          "name": "Seoul",
+          "cod": 200
+        }
+      }
+    ],
+    "Switch": [
+      {
+        "json": {
+          "coord": {
+            "lon": 126.9778,
+            "lat": 37.5683
+          },
+          "weather": [
+            {
+              "id": 803,
+              "main": "Clouds",
+              "description": "broken clouds",
+              "icon": "04d"
+            }
+          ],
+          "base": "stations",
+          "main": {
+            "temp": 28.76,
+            "feels_like": 32.92,
+            "temp_min": 27.78,
+            "temp_max": 28.76,
+            "pressure": 1004,
+            "humidity": 74,
+            "sea_level": 1004,
+            "grnd_level": 994
+          },
+          "visibility": 10000,
+          "wind": {
+            "speed": 2.57,
+            "deg": 180
+          },
+          "clouds": {
+            "all": 75
+          },
+          "dt": 1754895995,
+          "sys": {
+            "type": 1,
+            "id": 8105,
+            "country": "KR",
+            "sunrise": 1754858658,
+            "sunset": 1754908231
+          },
+          "timezone": 32400,
+          "id": 1835848,
+          "name": "Seoul",
+          "cod": 200
+        }
+      }
+    ]
+  },
   "connections": {
     "When clicking ‘Execute workflow’": {
       "main": [
@@ -143,11 +422,42 @@
       "main": [
         [
           {
-            "node": "Append row in sheet",
+            "node": "Switch",
             "type": "main",
             "index": 0
           }
         ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Append a block",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message": {
+      "main": [
+        []
       ]
     }
   },
@@ -155,7 +465,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "bf22ace1-204c-49f4-b7c4-2f97519a4bfd",
+  "versionId": "93a9acbf-799b-4146-bdd0-68d5ab41f18a",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "b7677542f30a1fd6c4c70a150414e98931044fc4dfd46655e6a9105a3cb936e6"
