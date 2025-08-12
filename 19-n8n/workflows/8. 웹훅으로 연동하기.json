@@ -1,0 +1,373 @@
+{
+  "name": "8. 웹훅으로 연동하기",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## n8n 워크플로우와 연동\n  1. HTTP Request(클라)로 동작  -->  REST API SERVER(웹훅 서버)\n  2. 웹훅 서버(트리거)로 동작  <-- HTTP Request\n  3. MCP 클라/서버로 동작\n\nGET : http://server.com/api/list?name=홍길동\nPOST : http://server.com/api/list\n       body { \"name\" : \"홍길동\" }\n\n\n\n",
+        "height": 192,
+        "width": 640
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -800,
+        -432
+      ],
+      "id": "d1eaee74-6a08-4fd3-bb5e-57834da27983",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "form-submit",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -656,
+        -224
+      ],
+      "id": "4fe9867b-e0dc-467f-8f0c-962f99f684d0",
+      "name": "Webhook",
+      "webhookId": "d61f7329-e8b9-4a0b-a76c-a35c1f9c951f"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://nissisoft21.app.n8n.cloud/webhook-test/form-submit",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"name\": \"홍길동\",\n  \"email\": \"hong@example.com\",\n  \"phone\": \"010-1234-5678\",\n  \"company\": \"테스트회사\",\n  \"subject\": \"문의사항\",\n  \"message\": \"안녕하세요. 웹사이트 제작에 대해 문의하고 싶습니다.\",\n  \"category\": \"일반문의\",\n  \"budget\": \"100만원-500만원\",\n  \"source\": \"웹사이트\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -912,
+        -96
+      ],
+      "id": "c99a3770-08d3-4166-b56f-a2d9f05f780f",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "5ed97cfb-2a41-48df-bd5e-5f529e5eda48",
+              "leftValue": "={{Object.keys($json.body || {}).length}}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -464,
+        -224
+      ],
+      "id": "fbc223e4-9f5d-46c6-b9b1-ee8df1ba227b",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"status\": \"error\",\n  \"message\": \"잘못된 데이터입니다\",\n  \"timestamp\": \"={{new Date().toISOString()}}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        -416,
+        0
+      ],
+      "id": "95196898-8f4f-4214-896c-a435abbfe7ce",
+      "name": "Error Response"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 웹훅에서 받은 데이터를 Google Sheets 형태로 변환\n\n// 반환할 데이터 배열 초기화\nconst returnData = [];\n\nfor (const item of $input.all()) {\n  const body = item.json.body || {};\n  const headers = item.json.headers || {};\n  const timestamp = new Date().toLocaleString('ko-KR');\n  \n  // 공통 데이터 추출\n  const rowData = {\n    timestamp: timestamp,\n    name: body.name || body.이름 || '',\n    email: body.email || body.이메일 || '',\n    phone: body.phone || body.전화번호 || '',\n    message: body.message || body.메시지 || body.내용 || '',\n    company: body.company || body.회사명 || '',\n    subject: body.subject || body.제목 || '',\n    ip_address: headers['x-forwarded-for'] || headers['x-real-ip'] || 'Unknown',\n    user_agent: headers['user-agent'] || 'Unknown'\n  };\n  \n  // 최종 데이터 구성\n  const finalData = {\n    ...rowData\n  };\n  \n  returnData.push({\n    json: finalData\n  });\n}\n\nreturn returnData;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -224,
+        -240
+      ],
+      "id": "caa6e9d8-6640-43e9-ae9a-4428d16271d3",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1FC-CNZoDNUywkQoK7pfgjmbQ8xfnfHObvb7sENuhYvw",
+          "mode": "list",
+          "cachedResultName": "6-webhook",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1FC-CNZoDNUywkQoK7pfgjmbQ8xfnfHObvb7sENuhYvw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "시트1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1FC-CNZoDNUywkQoK7pfgjmbQ8xfnfHObvb7sENuhYvw/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "timestamp": "={{ $json.timestamp }}",
+            "name": "={{ $json.name }}",
+            "email": "={{ $json.email }}",
+            "company": "={{ $json.company }}",
+            "phone": "={{ $json.phone }}",
+            "subject": "={{ $json.subject }}",
+            "additional_data": "={{ $json.additional_data }}",
+            "user_agent": "={{ $json.user_agent }}",
+            "ip_address": "={{ $json.ip_address }}",
+            "message": "={{ $json.message }}",
+            "category": "={{ $('If').item.json.body.category }}",
+            "budget": "={{ $('If').item.json.body.budget }}",
+            "source": "={{ $('If').item.json.body.source }}"
+          },
+          "matchingColumns": [
+            "timestamp"
+          ],
+          "schema": [
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "company",
+              "displayName": "company",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "subject",
+              "displayName": "subject",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "message",
+              "displayName": "message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "category",
+              "displayName": "category",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "budget",
+              "displayName": "budget",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "source",
+              "displayName": "source",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ip_address",
+              "displayName": "ip_address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "user_agent",
+              "displayName": "user_agent",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "additional_data",
+              "displayName": "additional_data",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -32,
+        -240
+      ],
+      "id": "ecbe6cd2-47d2-4dda-91e0-4c16eb232f37",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "crQhuch7dXX3QwGD",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"status\": \"success\",\n  \"message\": \"데이터가 성공적으로 저장되었습니다\",\n  \"timestamp\": \"={{new Date().toISOString()}}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        192,
+        -240
+      ],
+      "id": "0d955408-8db9-4c4b-bf87-c0473e6608b5",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c9aee31d-278c-43c0-998d-df7a6a00ee67",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b7677542f30a1fd6c4c70a150414e98931044fc4dfd46655e6a9105a3cb936e6"
+  },
+  "id": "OgCWpQnzT4waOnF3",
+  "tags": []
+}
