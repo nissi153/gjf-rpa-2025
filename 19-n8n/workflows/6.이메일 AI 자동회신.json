@@ -1,0 +1,316 @@
+{
+  "name": "6.이메일 AI 자동회신",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "labelIds": [
+            "INBOX"
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -320,
+        -80
+      ],
+      "id": "6e3d44e3-5f41-42fb-934d-09ead663a2dd",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Z9xqG2FmNKsPBjRq",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "ee038399-d7db-4201-9f57-65693886839f",
+              "leftValue": "={{ String($json.labelIds) }}",
+              "rightValue": "INBOX",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "bdb0cfc3-a497-4fe5-bc0c-78bdc52ff31b",
+              "leftValue": "={{ $json.subject }}",
+              "rightValue": "RE:|FW:|답장:|전달:|자동응답|Out of Office|Auto-Reply",
+              "operator": {
+                "type": "string",
+                "operation": "notRegex"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -80,
+        -80
+      ],
+      "id": "8a36748e-888b-4479-a177-62468852d6e6",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=당신은 전문적이고 친근한 고객 서비스 담당자입니다. 다음 이메일에 대해 적절한 자동 회신을 작성해 주세요.\n\n받은 이메일 정보:\n발신자: {{ $json.from }}\n제목: {{ $json.subject }}\n내용: {{ $json.text || $json.html }}\n\n자동 회신 작성 가이드라인:\n1. 정중하고 전문적인 톤을 유지하세요\n2. 이메일을 받았음을 확인해 주세요\n3. 가능한 경우 언제까지 답변할 예정인지 알려주세요\n4. 급한 문의의 경우 대안적 연락 방법을 제시하세요\n5. 한국어로 작성하세요\n6. 이메일 내용에 맞는 맞춤형 응답을 제공하세요\n\n다음 형식으로 작성해 주세요:\n- 제목: [적절한 회신 제목]\n- 본문: [정중한 자동 회신 내용]\n\n응답 예시:\n제목: Re: [원본 제목]\n본문:\n안녕하세요, [발신자명] 님\n\n소중한 이메일을 보내주셔서 감사합니다.\n귀하의 [문의 내용 요약]에 대한 이메일을 잘 받았습니다.\n\n담당자가 검토 후 영업일 기준 1-2일 이내에 상세한 답변을 드리겠습니다.\n급한 문의사항이 있으시다면 02-1234-5678로 연락해 주시기 바랍니다.\n\n감사합니다.\n[회사명] 고객지원팀"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        176,
+        -96
+      ],
+      "id": "6610a9fe-16d1-4286-bb52-685794e31b55",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ugMNFjqYLZ81em2y",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d8e6d2d8-71b1-4347-90df-3a80451cec4f",
+              "name": "title",
+              "value": "={{ $json.message.content.split('제목: ')[1]?.split('\\n')[0]?.trim() || 'Re: 자동응답' }}",
+              "type": "string"
+            },
+            {
+              "id": "2176eb0a-8d0e-4630-8037-7d36f26b373f",
+              "name": "content",
+              "value": "={{ $json.message.content.split('본문:')[1]?.trim() || $json.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        512,
+        -96
+      ],
+      "id": "a620868f-aedc-4248-bf9e-8589751aad0b",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1H6lCzNA3YZ9hzMR3OpZHhe8wYJjKCoT68Z01DsKqP68",
+          "mode": "list",
+          "cachedResultName": "5-메일자동회신",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1H6lCzNA3YZ9hzMR3OpZHhe8wYJjKCoT68Z01DsKqP68/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "시트1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1H6lCzNA3YZ9hzMR3OpZHhe8wYJjKCoT68Z01DsKqP68/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "content": "={{ $('Message a model').item.json.message.content }}",
+            "title": "={{ $('Edit Fields').item.json.title }}",
+            "created_at": "={{ $('Gmail Trigger').item.json.date }}",
+            "sent_email": "={{ $('Gmail Trigger').item.json.headers.from.split('From: ')[1] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "title",
+              "displayName": "title",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "content",
+              "displayName": "content",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "sent_email",
+              "displayName": "sent_email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        928,
+        -112
+      ],
+      "id": "32825357-8ccd-4203-8954-cc725d66c6ec",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "crQhuch7dXX3QwGD",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Gmail Trigger').item.json.headers.from.split('From: ')[1] }}",
+        "subject": "={{ $json.title }}",
+        "message": "={{ $json.content }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        720,
+        -96
+      ],
+      "id": "e458e773-9b28-4317-ba6e-0e77d3318ca7",
+      "name": "Send a message",
+      "webhookId": "25888355-6472-44bb-ab00-6943ebe634aa",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Z9xqG2FmNKsPBjRq",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "4f2be9fd-6401-4d0c-98a9-f05f4b581a6b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b7677542f30a1fd6c4c70a150414e98931044fc4dfd46655e6a9105a3cb936e6"
+  },
+  "id": "5VrN6xPIukeGwTtC",
+  "tags": []
+}

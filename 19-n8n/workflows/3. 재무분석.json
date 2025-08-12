@@ -45,7 +45,13 @@
           "cachedResultName": "시트1",
           "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1EvLV2xrB6rJ4xdOsUV9hUwuw-jbddYSaLzgGjl-FiOE/edit#gid=0"
         },
-        "options": {}
+        "options": {
+          "dataLocationOnSheet": {
+            "values": {
+              "rangeDefinition": "detectAutomatically"
+            }
+          }
+        }
       },
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.6,
@@ -65,7 +71,7 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "=Get the financial statement data of the company {{ $json.기업명 || $json['기업명'] || '기업명을 찾을 수 없음' }} for the 4th quarter of 2023 and print it out as below.\nThe output must be in JSON format.\ndo not include Approximately word.\nchange \"billion\" word to \"B\"\ndo not include \"units\" word.\nFormat:\n{\n  \"Total sales\": \"123,123\",\n  \"Net income\": \"1.1B\",\n  \"Total Revenue\": \"12.3B\",\n  \"Operating Costs\": \"12.3B\",\n  \"R&D\": \"1.12B\",\n  \"Earnings per share\": \"0.12\"\n}",
+        "text": "=Get the financial statement data of the company {{ String($json.기업명 || $json['기업명'] || '기업명을 찾을 수 없음') }} for the 4th quarter of 2023 and print it out as below.\nThe output must be in JSON format.\ndo not include Approximately word.\nchange \"billion\" word to \"B\"\ndo not include \"units\" word.\nFormat:\n{\n  \"Total sales\": \"123,123\",\n  \"Net income\": \"1.1B\",\n  \"Total Revenue\": \"12.3B\",\n  \"Operating Costs\": \"12.3B\",\n  \"R&D\": \"1.12B\",\n  \"Earnings per share\": \"0.12\"\n}",
         "hasOutputParser": true,
         "options": {
           "systemMessage": "You are a global financial expert and stock trader."
@@ -74,8 +80,8 @@
       "type": "@n8n/n8n-nodes-langchain.agent",
       "typeVersion": 2.2,
       "position": [
-        32,
-        -80
+        -16,
+        -160
       ],
       "id": "00b6c1f2-a540-4009-815d-22661b1f195f",
       "name": "AI Agent",
@@ -94,8 +100,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.2,
       "position": [
-        -160,
-        224
+        -48,
+        128
       ],
       "id": "162db583-c82a-47de-a293-c75324412cce",
       "name": "OpenAI Chat Model",
@@ -113,8 +119,8 @@
       "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
       "typeVersion": 1,
       "position": [
-        48,
-        336
+        -176,
+        256
       ],
       "id": "e9093641-f15f-4272-935b-137fc7e636ce",
       "name": "Google Gemini Chat Model",
@@ -132,8 +138,8 @@
       "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
       "typeVersion": 1,
       "position": [
-        208,
-        160
+        368,
+        48
       ],
       "id": "7bfeabd4-c937-4b6c-af64-5457ec4602a7",
       "name": "SerpAPI",
@@ -152,8 +158,8 @@
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
       "typeVersion": 1.3,
       "position": [
-        320,
-        144
+        112,
+        48
       ],
       "id": "505a6cec-286f-483c-9dc5-6548d54e5416",
       "name": "Structured Output Parser"
@@ -178,13 +184,14 @@
         "columns": {
           "mappingMode": "defineBelow",
           "value": {
-            "총매출": "={{ $json.output['Total sales'] }}",
+            "총매출": "={{ $('AI Agent').item.json.output['Total sales'] }}",
             "기업명": "={{ $('Get row(s) in sheet').item.json['기업명'] }}",
-            "순수익": "={{ $json.output['Net income'] }}",
-            "매출총이익": "={{ $json.output['Total Revenue'] }}",
-            "운영비용": "={{ $json.output['Operating Costs'] }}",
-            "연구개발비": "={{ $json.output['R&D'] }}",
-            "주당순수익": "={{ $json.output['Earnings per share'] }}"
+            "순수익": "={{ $('AI Agent').item.json.output['Net income'] }}",
+            "매출총이익": "={{ $('AI Agent').item.json.output['Total Revenue'] }}",
+            "운영비용": "={{ $('AI Agent').item.json.output['Operating Costs'] }}",
+            "연구개발비": "={{ $('AI Agent').item.json.output['R&D'] }}",
+            "주당순수익": "={{ $('AI Agent').item.json.output['Earnings per share'] }}",
+            "분석결과": "={{ $json.message.content['재무상태 해석'] }}"
           },
           "matchingColumns": [
             "기업명"
@@ -283,8 +290,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.6,
       "position": [
-        448,
-        -96
+        624,
+        -160
       ],
       "id": "c355061d-5456-43ad-b33f-f9562fb9e081",
       "name": "Update row in sheet",
@@ -292,6 +299,42 @@
         "googleSheetsOAuth2Api": {
           "id": "crQhuch7dXX3QwGD",
           "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=당신은 세계적으로 유능한 재무 분석가입니다.   회사 이름 : {{ $('Get row(s) in sheet').item.json['기업명'] }} 먼저, 제공된 재무제표 데이터를 검토하세요: 이 데이터를 바탕으로 다음 단계를 수행하세요:  1. 재무상태 해석:    - 계산된 비율과 지표를 동종업계 평균 또는 경쟁사와 비교하여 해석하세요.   - 기업의 강점과 약점을 파악하세요.    - 재무적 위험요소가 있다면 식별하세요.  주의사항: - 300 자 이내로 작성하시오. - 모든 내용은 한국어로 작성하세요. - 명확하고 논리적인 구조를 사용하세요. - 객관적인 데이터와 분석에 기반하여 결론을 도출하세요. - 전문적이고 정확한 용어를 사용하되, 이해하기 쉽게 설명하세요."
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {
+          "maxTokens": 1000,
+          "temperature": 1
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        288,
+        -160
+      ],
+      "id": "9f5f4d35-052b-4305-bc01-cdee69250f30",
+      "name": "Message a model",
+      "credentials": {
+        "openAiApi": {
+          "id": "F5nbHJEYn1X5o4hy",
+          "name": "OpenAi account 2"
         }
       }
     }
@@ -322,11 +365,6 @@
     },
     "OpenAI Chat Model": {
       "ai_languageModel": [
-        []
-      ]
-    },
-    "Google Gemini Chat Model": {
-      "ai_languageModel": [
         [
           {
             "node": "AI Agent",
@@ -341,11 +379,21 @@
         ]
       ]
     },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        []
+      ]
+    },
     "SerpAPI": {
       "ai_tool": [
         [
           {
             "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Message a model",
             "type": "ai_tool",
             "index": 0
           }
@@ -367,6 +415,17 @@
       "main": [
         [
           {
+            "node": "Message a model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Message a model": {
+      "main": [
+        [
+          {
             "node": "Update row in sheet",
             "type": "main",
             "index": 0
@@ -379,7 +438,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "b4c81280-daca-42c6-927c-fbb08b4c9bcb",
+  "versionId": "888f97ac-f735-412e-b627-a50d9ba751d7",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "b7677542f30a1fd6c4c70a150414e98931044fc4dfd46655e6a9105a3cb936e6"

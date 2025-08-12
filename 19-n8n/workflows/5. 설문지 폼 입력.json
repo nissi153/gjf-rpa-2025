@@ -1,0 +1,236 @@
+{
+  "name": "5. 설문지 폼 입력",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "입사지원서",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "성함",
+              "placeholder": "성함을 입력하세요.",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "전화번호",
+              "fieldType": "number",
+              "placeholder": "전화번호를 입력하세요(-없이)",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "경력",
+              "fieldType": "textarea",
+              "placeholder": "경력을 500자 내로 기술하세요.",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "지원부서",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "코딩부"
+                  },
+                  {
+                    "option": "자동화부"
+                  },
+                  {
+                    "option": "AI부"
+                  }
+                ]
+              },
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -400,
+        -144
+      ],
+      "id": "105b4641-26fe-4a69-835e-cceee6552076",
+      "name": "On form submission",
+      "webhookId": "463fa369-de3c-4051-9ed1-cdb9dcdf7d01"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1B22ilQC7cyuwC39YxH5FROWQOlhOwKzcwTed9mPJd58",
+          "mode": "list",
+          "cachedResultName": "4-입사지원서",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1B22ilQC7cyuwC39YxH5FROWQOlhOwKzcwTed9mPJd58/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "시트1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1B22ilQC7cyuwC39YxH5FROWQOlhOwKzcwTed9mPJd58/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "성함": "={{ $json['성함'] }}",
+            "전화번호": "={{ $json['전화번호'] }}",
+            "경력": "={{ $json['경력'] }}",
+            "지원분야": "={{ $json['지원부서'] }}",
+            "submittedAt": "={{ $json.submittedAt }}",
+            "formMode": "={{ $json.formMode }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "성함",
+              "displayName": "성함",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "전화번호",
+              "displayName": "전화번호",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "경력",
+              "displayName": "경력",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "지원분야",
+              "displayName": "지원분야",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "submittedAt",
+              "displayName": "submittedAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "formMode",
+              "displayName": "formMode",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        -160,
+        -144
+      ],
+      "id": "03c67949-73dd-44d6-9fc9-29d60f06d488",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "crQhuch7dXX3QwGD",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "### 강의신청폼\n### 상품(공구)주문 폼\n### 숙박문의 폼\n\n\n\n",
+        "height": 128
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -416,
+        32
+      ],
+      "id": "29457731-2688-4057-8fca-ab659848f82e",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "sendTo": "nissisoft21@gmail.com",
+        "subject": "새 이력서가 도착했습니다. ",
+        "message": "=성함 :  {{ $json['성함'] }} \n전화번호 : {{ $json['전화번호'] }}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        80,
+        -144
+      ],
+      "id": "c8f05e61-f4c1-4037-8ff4-31e0fdb5c115",
+      "name": "Send a message",
+      "webhookId": "a3f44620-eb1e-482b-89a0-979c77509ccc",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Z9xqG2FmNKsPBjRq",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "4ac1c3ef-88c0-4c90-a1d2-189d2e4e0164",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b7677542f30a1fd6c4c70a150414e98931044fc4dfd46655e6a9105a3cb936e6"
+  },
+  "id": "PlbSQjjvsyVmpaSN",
+  "tags": []
+}
