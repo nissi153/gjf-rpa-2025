@@ -1,0 +1,417 @@
+{
+  "name": "7. RSS 뉴스 슬랙 연동",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 6
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -672,
+        -32
+      ],
+      "id": "2c13daf4-6703-45fc-a656-714d53abb7ca",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "url": "https://news.google.com/rss?hl=ko&gl=KR&ceid=KR:ko",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -240,
+        -96
+      ],
+      "id": "4d3ab00d-9c1a-4eca-b209-4c97939f2932",
+      "name": "RSS Read"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3078bbb0-a613-4c11-aa81-130cdffe4dd1",
+              "leftValue": "={{ $json.title }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "76b6d515-563f-476e-a2f6-8d5c9832786e",
+              "leftValue": "={{ $json.title }}",
+              "rightValue": "트럼프",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        -112
+      ],
+      "id": "0277d445-b70f-45c7-b8ba-87f05261ffd1",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "jsCode": "// RSS 피드에서 읽어온 데이터를 슬랙 메시지 형태로 변환\n\n// 반환할 데이터 배열 초기화\nconst returnData = [];\n\nfor (const item of $input.all()) {\n  const title = item.json.title || '제목 없음';\n  const link = item.json.link || '';\n  const description = item.json.description || '';\n  const pubDate = item.json.pubDate || '';\n  \n  // 슬랙 메시지 포맷 생성\n  const slackMessage = {\n    text: `📰 새로운 뉴스: ${title}`,\n    blocks: [\n      {\n        type: \"section\",\n        text: {\n          type: \"mrkdwn\",\n          text: `*${title}*\\n\\n${description ? description.substring(0, 200) + '...' : ''}\\n\\n🔗 <${link}|기사 읽기>`\n        }\n      },\n      {\n        type: \"context\",\n        elements: [\n          {\n            type: \"mrkdwn\",\n            text: `📅 ${pubDate ? new Date(pubDate).toLocaleString('ko-KR') : '시간 정보 없음'}`\n          }\n        ]\n      },\n      {\n        type: \"divider\"\n      }\n    ]\n  };\n  \n  // 데이터 추가\n  returnData.push({\n    json: slackMessage\n  });\n}\n\n// 결과 반환\nreturn returnData;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        304,
+        -112
+      ],
+      "id": "98cea73a-4539-41c4-b67e-176e3e614870",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0996CSV7RC",
+          "mode": "list",
+          "cachedResultName": "소셜"
+        },
+        "text": "={{ $json.text }} {{ $json.blocks[0].text.text }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        496,
+        96
+      ],
+      "id": "4c779894-52e1-44f7-ad0a-12d16f1b5094",
+      "name": "Send a message",
+      "webhookId": "bc67dd81-524d-476f-a627-5691f1f15103",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "4Jg4LpwwXgZDWsAf",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://www.hani.co.kr/rss",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -240,
+        80
+      ],
+      "id": "2227aba7-e328-4bba-a42b-b906127c4407",
+      "name": "RSS Read1"
+    },
+    {
+      "parameters": {
+        "url": "https://www.mk.co.kr/rss/30100041/",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        -240,
+        256
+      ],
+      "id": "2e990675-3bda-49a7-86a1-21170c7fe42b",
+      "name": "RSS Read2"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "4ae9a2ff-329c-404d-8b03-7fc4ceffd97e"
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -480,
+        -32
+      ],
+      "id": "0a317c05-b152-438c-a576-690eb0187a30",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        576,
+        -320
+      ],
+      "id": "4aca15fb-0084-4065-a54e-7606574a9da7",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3078bbb0-a613-4c11-aa81-130cdffe4dd1",
+              "leftValue": "={{ $json.title }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "76b6d515-563f-476e-a2f6-8d5c9832786e",
+              "leftValue": "={{ $json.title }}",
+              "rightValue": "트럼프",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        80
+      ],
+      "id": "840f5b01-d5d7-4ac3-a638-38faf9e572ec",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3078bbb0-a613-4c11-aa81-130cdffe4dd1",
+              "leftValue": "={{ $json.title }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "76b6d515-563f-476e-a2f6-8d5c9832786e",
+              "leftValue": "={{ $json.title }}",
+              "rightValue": "트럼프",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        256
+      ],
+      "id": "ad421f32-7cbf-4438-b5ff-2a517f30bb14",
+      "name": "If2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Read": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Read2": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "RSS Read",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "RSS Read1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "RSS Read2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Read1": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        []
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "7ceda6d2-4f55-424b-94bf-969ed8a631b7",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b7677542f30a1fd6c4c70a150414e98931044fc4dfd46655e6a9105a3cb936e6"
+  },
+  "id": "lZ1ojC0SzeO1JNyO",
+  "tags": []
+}
