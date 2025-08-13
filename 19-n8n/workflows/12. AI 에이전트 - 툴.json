@@ -1,0 +1,367 @@
+{
+  "name": "12. AI 에이전트 - 툴",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "130b02b2-eb00-42a9-8d8d-6969d628b680",
+      "name": "When chat message received",
+      "webhookId": "9c35eda3-e619-4683-942f-603f175e235d"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "d7b961f0-a339-4a3b-856d-81524f42df78",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        80,
+        192
+      ],
+      "id": "e2aee35d-cee3-4268-b29c-8e391a3d7b50",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ugMNFjqYLZ81em2y",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        224,
+        192
+      ],
+      "id": "5606fdee-c186-4541-8543-24093a99a641",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
+      "typeVersion": 1,
+      "position": [
+        544,
+        192
+      ],
+      "id": "69724bde-0a56-4b8f-93f7-d6ec3b96c71c",
+      "name": "SerpAPI",
+      "credentials": {
+        "serpApi": {
+          "id": "yUTzhbI2A2mHeZiD",
+          "name": "SerpAPI account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        416,
+        192
+      ],
+      "id": "dfd441b8-03f1-4cc6-829f-17463facb8bb",
+      "name": "Calculator"
+    },
+    {
+      "parameters": {
+        "content": "## Tool에 붙일 수 있는 것\n- MCP\n- Vector Store\n- Apps",
+        "height": 140,
+        "width": 260
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        672,
+        -16
+      ],
+      "id": "e1d4ed42-b8f2-4c3a-90d4-691c5d90bb7e",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "datapopcorn@gmail.com",
+          "mode": "list",
+          "cachedResultName": "datapopcorn@gmail.com"
+        },
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.googleCalendar",
+      "typeVersion": 1.3,
+      "position": [
+        1088,
+        400
+      ],
+      "id": "ebcf11f5-ad80-4301-b5e8-36fce50d8038",
+      "name": "Google Calendar"
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "datapopcorn@gmail.com",
+          "mode": "list",
+          "cachedResultName": "datapopcorn@gmail.com"
+        },
+        "start": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Start', ``, 'string') }}",
+        "end": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('End', ``, 'string') }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        944,
+        400
+      ],
+      "id": "f19215c8-f34e-4f88-848c-83fadd60855b",
+      "name": "Google Calendar1"
+    },
+    {
+      "parameters": {
+        "content": "## Tool과 그냥 쓰는 것 차이 \n- **그냥 쓰는 경우**:\n    \n    “너가 버튼 누르면 캘린더에 일정 추가되는 자동화 만들었어”\n    \n    → 사용자 또는 트리거가 실행\n    \n- **Tool로 쓰는 경우**:\n    \n    “GPT가 대화 중 ‘회의 잡아줘’라는 말 듣고, **스스로 캘린더 Tool을 꺼내서** 일정을 등록함”",
+        "height": 360,
+        "width": 460
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        832,
+        160
+      ],
+      "id": "8ba3f0db-8086-416e-9091-1de5be4252e1",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
+      "typeVersion": 1.1,
+      "position": [
+        416,
+        352
+      ],
+      "id": "25dee2c9-9286-43c4-a805-dc46001fda31",
+      "name": "MCP Client"
+    },
+    {
+      "parameters": {
+        "path": "b43c4917-386f-430b-9edd-211365621aa0"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 2,
+      "position": [
+        80,
+        448
+      ],
+      "id": "f6d10297-e883-45f3-8ba8-be1d9bd4c8a4",
+      "name": "MCP Server Trigger",
+      "webhookId": "b43c4917-386f-430b-9edd-211365621aa0"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "typeVersion": 1.1,
+      "position": [
+        560,
+        352
+      ],
+      "id": "afc8bade-41b0-4aa0-9542-140d70b87363",
+      "name": "Think"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCode",
+      "typeVersion": 1.3,
+      "position": [
+        688,
+        352
+      ],
+      "id": "0ef65142-fc71-44d9-b62b-89251537b659",
+      "name": "Code Tool"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "0Y3lAFibD71LKn47",
+          "mode": "list",
+          "cachedResultName": "4. 구글캘린더 연동"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        688,
+        176
+      ],
+      "id": "2eccece9-7e3a-4683-93c1-fbf635c73561",
+      "name": "Call n8n Workflow Tool"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.2,
+      "position": [
+        560,
+        512
+      ],
+      "id": "a335dbc9-0ad2-4079-9791-4ac753816b28",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "tableName": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        688,
+        512
+      ],
+      "id": "a62d3c30-f9c8-4872-b32c-63f2a0840a43",
+      "name": "Supabase Vector Store",
+      "credentials": {
+        "supabaseApi": {
+          "id": "JlrcNVHPsQfodSiI",
+          "name": "Supabase account - Service Role"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SerpAPI": {
+      "ai_tool": [
+        []
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Think": {
+      "ai_tool": [
+        []
+      ]
+    },
+    "Code Tool": {
+      "ai_tool": [
+        []
+      ]
+    },
+    "Call n8n Workflow Tool": {
+      "ai_tool": [
+        []
+      ]
+    },
+    "HTTP Request": {
+      "ai_tool": [
+        []
+      ]
+    },
+    "Supabase Vector Store": {
+      "ai_tool": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "bdf956f4-c372-4a87-93d2-c9e3da7ecf85",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b7677542f30a1fd6c4c70a150414e98931044fc4dfd46655e6a9105a3cb936e6"
+  },
+  "id": "yJYxCFHCdJ1hjBkH",
+  "tags": []
+}
