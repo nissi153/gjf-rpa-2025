@@ -1,0 +1,136 @@
+{
+  "name": "11. AI 에이전트 - 메모리",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "5c588159-b3eb-4795-a6ae-4cdf469ddae5",
+      "name": "When chat message received",
+      "webhookId": "0db217bd-78e7-436f-8053-ce535778f12a"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "2ad60946-e7c5-4671-87ef-b0783216c035",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        80,
+        208
+      ],
+      "id": "af2aa49d-86a3-4c75-9c24-5a9412ad554d",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ugMNFjqYLZ81em2y",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryPostgresChat",
+      "typeVersion": 1.3,
+      "position": [
+        224,
+        208
+      ],
+      "id": "081215c0-c928-4ad4-9646-ba6dc406d5a8",
+      "name": "Postgres Chat Memory",
+      "credentials": {
+        "postgres": {
+          "id": "ZifVcJ3mRKoKfEkF",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "### **Supabase의 Postgres 접속 정보 확인**\n- Project Settings → Database로 이동\n- 아래 정보 복사해둡니다:\n    - **Host** : aws-0-ap-northeast-2.pooler.supabase.com\n    - **Database** : postgres\n    - **User** : postgres.******\n    - **Password (프로젝트 생성시 입력했던 Password)**\n    - **Port** : 6543",
+        "height": 224,
+        "width": 432
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        352,
+        192
+      ],
+      "id": "0bebd1c0-0d68-4582-9d1f-3d91793632cb",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres Chat Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "3e0563f1-422e-4e3b-bef3-ad227d00d9bf",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b7677542f30a1fd6c4c70a150414e98931044fc4dfd46655e6a9105a3cb936e6"
+  },
+  "id": "K4NmdVwCIDEvOW90",
+  "tags": []
+}
