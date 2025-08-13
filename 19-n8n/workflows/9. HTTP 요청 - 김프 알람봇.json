@@ -1,0 +1,149 @@
+{
+  "name": "9. HTTP 요청 - 김프 알람봇",
+  "nodes": [
+    {
+      "parameters": {
+        "url": "http://43.203.209.153:8000/kimp/XRP",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -272,
+        -144
+      ],
+      "id": "c6449bb2-f194-4c7a-a6af-b9d4b1283d26",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "248ed964-0d0f-4b0f-81be-2af4548ef464",
+              "leftValue": "={{ $json.data.kimp_rate }}",
+              "rightValue": 1,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -80,
+        -144
+      ],
+      "id": "af90ba27-a712-400e-becb-09cbcd9030b2",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0996CSV7RC",
+          "mode": "list",
+          "cachedResultName": "소셜"
+        },
+        "text": "=김프 XRP : {{ $json.data.kimp_rate }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        160,
+        -128
+      ],
+      "id": "5a1711e3-cc13-4f25-9c12-ca3cdf70d0f3",
+      "name": "Send a message",
+      "webhookId": "f4340a93-483a-4d03-a1bf-05fa98de1049",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "4Jg4LpwwXgZDWsAf",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -496,
+        -144
+      ],
+      "id": "b005e721-b4b1-4736-aadf-f43a82bccd9c",
+      "name": "Schedule Trigger"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1e020d7b-40cb-4934-b340-3aec74c3673d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b7677542f30a1fd6c4c70a150414e98931044fc4dfd46655e6a9105a3cb936e6"
+  },
+  "id": "sKzXEJzkEWN9njbp",
+  "tags": []
+}
