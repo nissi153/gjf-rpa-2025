@@ -1,0 +1,75 @@
+{
+  "name": "14. MCP 서버",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "12279190-8c79-47e2-aa7b-1f43884d914e"
+      },
+      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
+      "typeVersion": 2,
+      "position": [
+        -128,
+        -96
+      ],
+      "id": "704370b3-d051-49dd-b411-d4766e2c1fae",
+      "name": "MCP Server Trigger",
+      "webhookId": "12279190-8c79-47e2-aa7b-1f43884d914e"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
+      "typeVersion": 1,
+      "position": [
+        96,
+        32
+      ],
+      "id": "11ea8f2b-6e94-4517-af83-7ea783538af0",
+      "name": "SerpAPI",
+      "credentials": {
+        "serpApi": {
+          "id": "yUTzhbI2A2mHeZiD",
+          "name": "SerpAPI account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "웹 검색기능을 n8n의 MCP기능으로 제공한다."
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        256,
+        -64
+      ],
+      "id": "bb118091-dff4-4a4f-98cd-03f114aeec89",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "SerpAPI": {
+      "ai_tool": [
+        [
+          {
+            "node": "MCP Server Trigger",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "430cc217-4cd0-447b-8d66-64aa36a2fabf",
+  "meta": {
+    "instanceId": "b7677542f30a1fd6c4c70a150414e98931044fc4dfd46655e6a9105a3cb936e6"
+  },
+  "id": "xs9VWr1Fz9poi9ZX",
+  "tags": []
+}

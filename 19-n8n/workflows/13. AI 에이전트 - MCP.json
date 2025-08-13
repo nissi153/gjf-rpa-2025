@@ -81,76 +81,17 @@
     },
     {
       "parameters": {
-        "path": "12279190-8c79-47e2-aa7b-1f43884d914e"
-      },
-      "type": "@n8n/n8n-nodes-langchain.mcpTrigger",
-      "typeVersion": 2,
-      "position": [
-        80,
-        96
-      ],
-      "id": "d9f8df0a-f8e5-4316-9cbb-0491d4e9e0b1",
-      "name": "MCP Server Trigger",
-      "webhookId": "12279190-8c79-47e2-aa7b-1f43884d914e"
-    },
-    {
-      "parameters": {
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.toolSerpApi",
-      "typeVersion": 1,
-      "position": [
-        336,
-        208
-      ],
-      "id": "4cbf0757-f624-4328-b8f6-9c459665f8bd",
-      "name": "SerpAPI",
-      "credentials": {
-        "serpApi": {
-          "id": "yUTzhbI2A2mHeZiD",
-          "name": "SerpAPI account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "content": "웹 검색기능을 n8n의 MCP기능으로 제공한다."
-      },
-      "type": "n8n-nodes-base.stickyNote",
-      "typeVersion": 1,
-      "position": [
-        464,
-        128
-      ],
-      "id": "4ccb1cb2-6a4f-4e3a-b751-d9336e446ca9",
-      "name": "Sticky Note"
-    },
-    {
-      "parameters": {
         "message": "={{ $json.output }}",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.chat",
       "typeVersion": 1,
       "position": [
-        352,
+        384,
         -256
       ],
       "id": "f7a37d84-e201-45c8-b1bb-0e0c99f7048f",
       "name": "Respond to Chat"
-    },
-    {
-      "parameters": {
-        "endpointUrl": "https://nissisoft21.app.n8n.cloud/mcp-test/12279190-8c79-47e2-aa7b-1f43884d914e"
-      },
-      "type": "@n8n/n8n-nodes-langchain.mcpClientTool",
-      "typeVersion": 1.1,
-      "position": [
-        400,
-        -64
-      ],
-      "id": "45aaa3a7-6af1-4f1b-b729-5c359ab16263",
-      "name": "MCP Client1"
     }
   ],
   "pinData": {},
@@ -199,17 +140,6 @@
         ]
       ]
     },
-    "SerpAPI": {
-      "ai_tool": [
-        [
-          {
-            "node": "MCP Server Trigger",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "AI Agent": {
       "main": [
         [
@@ -220,24 +150,13 @@
           }
         ]
       ]
-    },
-    "MCP Client1": {
-      "ai_tool": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_tool",
-            "index": 0
-          }
-        ]
-      ]
     }
   },
   "active": true,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "00679f98-e1f0-41cc-b388-87386016c047",
+  "versionId": "a79ed28e-95ea-404f-8b5e-fb1f8e18b585",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "b7677542f30a1fd6c4c70a150414e98931044fc4dfd46655e6a9105a3cb936e6"
