@@ -1,0 +1,407 @@
+{
+  "name": "19. 견적서 자동회신",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "93d23bdc-e755-40b4-a9d4-af75eea962a6",
+              "name": "created_at",
+              "value": "={{ $json.formattedDateTime }}",
+              "type": "string"
+            },
+            {
+              "id": "0186e9c9-424c-4ad8-8382-1614cf48c9d1",
+              "name": "full_name",
+              "type": "string",
+              "value": "={{ $json.body.data.fields[0].value }}"
+            },
+            {
+              "id": "e5559efc-1458-48e6-a207-f7fea896e930",
+              "name": "company_name",
+              "type": "string",
+              "value": "={{ $json.body.data.fields[1].value }}"
+            },
+            {
+              "id": "bbc04ed4-a8f7-4778-bfdc-038c637320fa",
+              "name": "business_number",
+              "type": "string",
+              "value": "={{ $json.body.data.fields[2].value }}"
+            },
+            {
+              "id": "8175addd-ef95-45f9-b307-b218d6ede2be",
+              "name": "email",
+              "type": "string",
+              "value": "={{ $json.body.data.fields[3].value }}"
+            },
+            {
+              "id": "f017c0bd-bd5d-4a5e-967f-bb27c514f5ee",
+              "name": "address",
+              "type": "string",
+              "value": "={{ $json.body.data.fields[4].value }}"
+            },
+            {
+              "id": "b8996f10-43a8-42be-97ab-1985699d59a9",
+              "name": "service",
+              "value": "={{ \n  ($json.body.data.fields[5].options.find(option => \n    option.id === $json.body.data.fields[5].value[0]\n  ) || {}).text || ''\n}}",
+              "type": "string"
+            },
+            {
+              "id": "cf9686c5-530b-4601-803a-f45c0f6dfe0c",
+              "name": "로고 디자인 수량",
+              "value": "={{ $json.body.data.fields[6].value ?? 0}}",
+              "type": "string"
+            },
+            {
+              "id": "d5f996ff-8bf8-4b6d-931d-584b6ca4ce06",
+              "name": " 로고 + 명함 수량",
+              "value": "={{ $json.body.data.fields[7].value ?? 0}}",
+              "type": "string"
+            },
+            {
+              "id": "2ce62d69-a340-4092-b23d-df7ba66c9c1a",
+              "name": "로고 + 명함 + 브랜드디자인 수량",
+              "value": "={{ $json.body.data.fields[8].value ?? 0}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "0e9f29b7-c1d6-4e8d-9e0f-dfd3e2fb0360",
+      "name": "Edit Fields",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        144,
+        -112
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {},
+      "id": "785b71bc-dcef-4b17-913b-765e8e5fb289",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        560,
+        -112
+      ],
+      "webhookId": "0401220d-037c-4e73-96ad-8ed99c768d6e",
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "/tally-submission",
+        "options": {}
+      },
+      "id": "d67eba74-fc06-49a5-a6f4-cf78fe2a616c",
+      "name": "Webhook : Tally",
+      "type": "n8n-nodes-base.webhook",
+      "position": [
+        -256,
+        -112
+      ],
+      "webhookId": "20bc0a59-b424-454d-9d49-4504e6b29fa2",
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "app9Ng0uCi2xalcnY",
+          "mode": "list",
+          "cachedResultName": "Tally",
+          "cachedResultUrl": "https://airtable.com/app9Ng0uCi2xalcnY"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tbleAull0Q6bhPV63",
+          "mode": "list",
+          "cachedResultName": "Table 1",
+          "cachedResultUrl": "https://airtable.com/app9Ng0uCi2xalcnY/tbleAull0Q6bhPV63"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "로고 디자인 수량": "={{ $json['로고 디자인 수량'] }}",
+            "로고 + 명함 수량": "={{ $json[' 로고 + 명함 수량'] }}",
+            "로고 + 명함 +브랜드디자인 수량": "={{ $json['로고 + 명함 + 브랜드디자인 수량'] }}",
+            "이메일": "={{ $json.email }}",
+            "대표자 성함": "={{ $json.full_name }}",
+            "생성일": "={{ $json.created_at }}",
+            "소재지": "={{ $json.address }}",
+            "회사명": "={{ $json.company_name }}",
+            "요청 서비스": "={{ $json.service }}",
+            "사업자 번호": "={{ $json.business_number }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "이메일",
+              "displayName": "이메일",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "생성일",
+              "displayName": "생성일",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "대표자 성함",
+              "displayName": "대표자 성함",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "소재지",
+              "displayName": "소재지",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "사업자 번호",
+              "displayName": "사업자 번호",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "회사명",
+              "displayName": "회사명",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "요청 서비스",
+              "displayName": "요청 서비스",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "로고 디자인 수량",
+              "displayName": "로고 디자인 수량",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "로고 + 명함 수량",
+              "displayName": "로고 + 명함 수량",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "로고 + 명함 +브랜드디자인 수량",
+              "displayName": "로고 + 명함 +브랜드디자인 수량",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "97ff796e-ebac-4765-9526-54f33a37e7e2",
+      "name": "Airtable : Create a record",
+      "type": "n8n-nodes-base.airtable",
+      "position": [
+        352,
+        -112
+      ],
+      "typeVersion": 2.1,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "AAJHM5iBqH7wFZ9j",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "=nissisoft21@gmail.com",
+        "subject": "Thanks for reaching out!",
+        "message": "=<!DOCTYPE html>\n<html lang=\"ko\">\n<head>\n    <meta charset=\"UTF-8\">\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n    <title>견적서</title>\n    <style>\n        body {\n            font-family: Arial, sans-serif;\n            margin: 0;\n            padding: 20px;\n            background-color: #f5f5f5;\n        }\n        .container {\n            max-width: 800px;\n            margin: 0 auto;\n            background-color: white;\n            border: 1px solid #ddd;\n        }\n        .header {\n            background-color: #FF4500;\n            color: white;\n            text-align: center;\n            padding: 15px;\n            font-size: 24px;\n            font-weight: bold;\n        }\n        .quote-info {\n            background-color: #FFE4E1;\n            padding: 10px;\n            text-align: right;\n            font-size: 14px;\n        }\n        .company-section {\n            display: flex;\n            border-bottom: 2px solid #FF4500;\n        }\n        .company-left {\n            flex: 1;\n            padding: 20px;\n            border-right: 1px solid #ddd;\n        }\n        .company-right {\n            flex: 1;\n            padding: 20px;\n        }\n        .company-title {\n            font-weight: bold;\n            margin-bottom: 15px;\n            font-size: 16px;\n        }\n        .company-item {\n            margin-bottom: 8px;\n            display: flex;\n        }\n        .company-label {\n            min-width: 80px;\n            font-weight: normal;\n        }\n        .company-value {\n            color: #0066CC;\n            font-weight: bold;\n        }\n        .items-table {\n            width: 100%;\n            border-collapse: collapse;\n            margin-top: 20px;\n        }\n        .items-header {\n            background-color: #FF4500;\n            color: white;\n            text-align: center;\n        }\n        .items-header th {\n            padding: 12px;\n            font-weight: bold;\n            border-right: 1px solid white;\n        }\n        .items-header th:last-child {\n            border-right: none;\n        }\n        .items-row td {\n            padding: 10px;\n            border: 1px solid #ddd;\n            text-align: center;\n            vertical-align: middle;\n        }\n        .items-row:nth-child(even) {\n            background-color: #f9f9f9;\n        }\n        .note-section {\n            padding: 15px;\n            font-size: 12px;\n            color: #666;\n            border-top: 1px solid #ddd;\n        }\n        .total-section {\n            padding: 20px;\n            text-align: right;\n            border-top: 2px solid #FF4500;\n        }\n        .tax-row {\n            margin-bottom: 10px;\n            font-size: 14px;\n        }\n        .total-row {\n            font-size: 18px;\n            font-weight: bold;\n            color: #FF4500;\n            border-top: 1px solid #333;\n            padding-top: 10px;\n        }\n        .won {\n            font-size: 14px;\n            color: #666;\n        }\n    </style>\n</head>\n<body>\n    <div class=\"container\">\n        <!-- 헤더 -->\n        <div class=\"header\">\n            견적서\n        </div>\n        \n        <!-- 견적서 정보 -->\n        <div class=\"quote-info\">\n            견적일자<br>\n            {{ $json.fields['생성일'] }}\n        </div>\n        \n        <!-- 회사 정보 섹션 -->\n        <div class=\"company-section\">\n            <div class=\"company-left\">\n                <div class=\"company-title\">공급자</div>\n                <div class=\"company-item\">\n                    <span class=\"company-label\">상호명:</span>\n                    <span class=\"company-value\">주식회사 리디자인</span>\n                </div>\n                <div class=\"company-item\">\n                    <span class=\"company-label\">사업자:</span>\n                    <span class=\"company-value\">212-51-54213</span>\n                </div>\n                <div class=\"company-item\">\n                    <span class=\"company-label\">대표자:</span>\n                    <span class=\"company-value\">김OO</span>\n                </div>\n                <div class=\"company-item\">\n                    <span class=\"company-label\">이메일:</span>\n                    <span class=\"company-value\">noname@gmail.com</span>\n                </div>\n                <div class=\"company-item\">\n                    <span class=\"company-label\">소재지:</span>\n                    <span class=\"company-value\">서울시 강북구</span>\n                </div>\n            </div>\n            \n            <div class=\"company-right\">\n                <div class=\"company-title\">수신자</div>\n                <div class=\"company-item\">\n                    <span class=\"company-label\">회사명:</span>\n                    <span class=\"company-value\">{{ $json.fields['회사명'] }}</span>\n                </div>\n                <div class=\"company-item\">\n                    <span class=\"company-label\">사업자번호:</span>\n                    <span class=\"company-value\">{{ $json.fields['사업자 번호'] || '-' }}</span>\n                </div>\n                <div class=\"company-item\">\n                    <span class=\"company-label\">대표명:</span>\n                    <span class=\"company-value\">{{ $json.fields['대표자 성함'] }}</span>\n                </div>\n                <div class=\"company-item\">\n                    <span class=\"company-label\">이메일:</span>\n                    <span class=\"company-value\">{{ $json.fields['이메일'] }}</span>\n                </div>\n                <div class=\"company-item\">\n                    <span class=\"company-label\">소재지:</span>\n                    <span class=\"company-value\">{{ $json.fields['소재지'] }}</span>\n                </div>\n            </div>\n        </div>\n        \n        <!-- 항목 테이블 -->\n        <table class=\"items-table\">\n            <thead class=\"items-header\">\n                <tr>\n                    <th width=\"35%\">항목</th>\n                    <th width=\"15%\">수량</th>\n                    <th width=\"20%\">단가</th>\n                    <th width=\"20%\">금액</th>\n                    <th width=\"10%\">비고</th>\n                </tr>\n            </thead>\n            <tbody>\n                <!-- 로고 디자인 -->\n                <tr class=\"items-row\" style=\"{{ ($json.fields['요청 서비스'] && $json.fields['요청 서비스'].includes('로고 디자인')) ? '' : 'display: none;' }}\">\n                    <td>로고 디자인</td>\n                    <td>{{ $json.fields['로고 디자인 수량'] || 1 }}</td>\n                    <td>₩50,000</td>\n                    <td>₩{{ (($json.fields['로고 디자인 수량'] || 1) * 50000).toLocaleString() }}</td>\n                    <td></td>\n                </tr>\n                \n                <!-- 로고 + 명함 -->\n                <tr class=\"items-row\" style=\"{{ ($json.fields['요청 서비스'] && $json.fields['요청 서비스'].includes('로고 + 명함')) ? '' : 'display: none;' }}\">\n                    <td>로고 + 명함 제작 서비스</td>\n                    <td>{{ $json.fields['로고 + 명함 수량'] || 1 }}</td>\n                    <td>₩80,000</td>\n                    <td>₩{{ (($json.fields['로고 + 명함 수량'] || 1) * 80000).toLocaleString() }}</td>\n                    <td></td>\n                </tr>\n                \n                <!-- 로고 + 명함 + 브랜드디자인 -->\n                <tr class=\"items-row\" style=\"{{ ($json.fields['요청 서비스'] && $json.fields['요청 서비스'].includes('브랜드디자인')) ? '' : 'display: none;' }}\">\n                    <td>로고 + 명함 + 브랜드디자인</td>\n                    <td>{{ $json.fields['로고 + 명함 +브랜드디자인 수량'] || 1 }}</td>\n                    <td>₩120,000</td>\n                    <td>₩{{ (($json.fields['로고 + 명함 +브랜드디자인 수량'] || 1) * 120000).toLocaleString() }}</td>\n                    <td></td>\n                </tr>\n                \n                <!-- 빈 행들 -->\n                <tr class=\"items-row\">\n                    <td>&nbsp;</td>\n                    <td>&nbsp;</td>\n                    <td>&nbsp;</td>\n                    <td>&nbsp;</td>\n                    <td>&nbsp;</td>\n                </tr>\n            </tbody>\n        </table>\n        \n        <!-- 비고 -->\n        <div class=\"note-section\">\n            당고 시효 : 주식 작업 완료일 주차 하루 받음\n        </div>\n        \n        <!-- 합계 섹션 -->\n        <div class=\"total-section\">\n            <div class=\"tax-row\">\n                합계: <span class=\"won\">₩{{ \n                    (\n                        ($json.fields['요청 서비스'] && $json.fields['요청 서비스'].includes('로고 디자인') ? ($json.fields['로고 디자인 수량'] || 1) * 50000 : 0) +\n                        ($json.fields['요청 서비스'] && $json.fields['요청 서비스'].includes('로고 + 명함') ? ($json.fields['로고 + 명함 수량'] || 1) * 80000 : 0) +\n                        ($json.fields['요청 서비스'] && $json.fields['요청 서비스'].includes('브랜드디자인') ? ($json.fields['로고 + 명함 +브랜드디자인 수량'] || 1) * 120000 : 0)\n                    ).toLocaleString()\n                }}</span>\n            </div>\n            <div class=\"tax-row\">\n                세금: <span style=\"color: #666;\">10.00%</span>\n            </div>\n            <div class=\"total-row\">\n                총 합계: <span class=\"won\">₩{{ \n                    Math.round(\n                        (\n                            ($json.fields['요청 서비스'] && $json.fields['요청 서비스'].includes('로고 디자인') ? ($json.fields['로고 디자인 수량'] || 1) * 50000 : 0) +\n                            ($json.fields['요청 서비스'] && $json.fields['요청 서비스'].includes('로고 + 명함') ? ($json.fields['로고 + 명함 수량'] || 1) * 80000 : 0) +\n                            ($json.fields['요청 서비스'] && $json.fields['요청 서비스'].includes('브랜드디자인') ? ($json.fields['로고 + 명함 +브랜드디자인 수량'] || 1) * 120000 : 0)\n                        ) * 1.1\n                    ).toLocaleString()\n                }}</span>\n            </div>\n        </div>\n    </div>\n</body>\n</html>",
+        "options": {}
+      },
+      "id": "f5e26baf-1d2d-4dfb-a3e5-97d71f950e7d",
+      "name": "GMAIL : Send a message",
+      "type": "n8n-nodes-base.gmail",
+      "position": [
+        816,
+        -112
+      ],
+      "webhookId": "b01196a3-c7e2-4933-b8ae-bb1e0820f703",
+      "typeVersion": 2.1,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Z9xqG2FmNKsPBjRq",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 각 입력 아이템에 대해 실행\nconst items = $input.all();\n\nreturn items.map(item => {\n  // 현재 UTC 시간을 한국 시간(KST)으로 변환\n  const d = new Date($input.first().json.body.createdAt); // UTC 기준\n  const kst = new Date(d.getTime() + 9 * 60 * 60 * 1000); // KST (UTC+9)\n  \n  const yyyy = kst.getFullYear();\n  const mm = String(kst.getMonth() + 1).padStart(2, '0');\n  const dd = String(kst.getDate()).padStart(2, '0');\n  const hh = String(kst.getHours()).padStart(2, '0');\n  const min = String(kst.getMinutes()).padStart(2, '0');\n  \n  const formattedDate = `${yyyy}년 ${mm}월 ${dd}일 ${hh}시 ${min}분`;\n  \n  // 기존 데이터에 포맷된 날짜 추가하여 반환\n  return {\n    ...item.json,\n    formattedDateTime: formattedDate,\n    kstDate: `${yyyy}-${mm}-${dd}`,\n    kstTime: `${hh}:${min}`\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -48,
+        -112
+      ],
+      "id": "86446cc2-fe51-4d3d-8383-1dea9fd20ba6",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "content": "### 고객과의 접점\n1. 공동구매\n2. 강의 수강신청\n3. 주문 신청\n\n폼 Form\n- 구글 폼\n- Tally 폼\n- n8n 폼",
+        "height": 224,
+        "width": 272
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -352,
+        -368
+      ],
+      "id": "8a5024b4-05fc-424e-9609-1088fa2f171d",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "전화\n문자SMS\n카톡\n이메일\n폼\n댓글\n리뷰",
+        "height": 224
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        -368
+      ],
+      "id": "b09e0dd2-4aa1-4902-8f81-395f715d914d",
+      "name": "Sticky Note1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Airtable : Create a record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "GMAIL : Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook : Tally": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Airtable : Create a record": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "80d274e3-f426-49f6-826b-b9b870e1fd4a",
+  "meta": {
+    "instanceId": "b7677542f30a1fd6c4c70a150414e98931044fc4dfd46655e6a9105a3cb936e6"
+  },
+  "id": "7UhqY2MVypQZeU9t",
+  "tags": []
+}
