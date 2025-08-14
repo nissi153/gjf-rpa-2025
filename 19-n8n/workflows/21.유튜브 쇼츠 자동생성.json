@@ -1,0 +1,1388 @@
+{
+  "name": "30.유튜브 쇼츠 자동생성 2",
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "function findSceneEntries(obj) {\n  const scenes = [];\n\n  for (const [key, value] of Object.entries(obj)) {\n    if (key.toLowerCase().startsWith(\"scene\") && typeof value === \"string\") {\n      scenes.push(value);\n    } else if (typeof value === \"object\" && value !== null) {\n      scenes.push(...findSceneEntries(value));\n    }\n  }\n\n  return scenes;\n}\n\nlet output = [];\n\ntry {\n  const inputData = items[0].json;\n  const scenes = findSceneEntries(inputData);\n\n  if (scenes.length === 0) {\n    throw new Error(\"No scene keys found at any level.\");\n  }\n\n  output = scenes.map(scene => ({ description: scene }));\n} catch (e) {\n  throw new Error(\"Could not extract scenes properly. Details: \" + e.message);\n}\n\nreturn output;\n"
+      },
+      "id": "18282b58-89f7-4e44-8b12-8165ba37db85",
+      "name": "Unbundle Prompts",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        3424,
+        416
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://queue.fal.run/fal-ai/mmaudio-v2 ",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "= {\n        \"prompt\": \"ASMR Soothing sound effects. {{ $('Prompts AI Agent').item.json.output.Sound }}\",\n        \"duration\": 10,\n        \"video_url\": \"{{ $json.data.outputs[0] }}\"\n  }\n",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 2000
+            }
+          }
+        }
+      },
+      "id": "6c84467d-fb9f-4a6a-ba0d-a4ffedb57bb9",
+      "name": "Create Sounds",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        3616,
+        640
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "GwGxiH59Jb6UlV6X",
+          "name": "Header Auth Fal.ai"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://queue.fal.run/fal-ai/mmaudio-v2/requests/{{ $json.request_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "70ecb479-ea9a-4ae5-92a4-a10bae01bbf9",
+      "name": "Get Sounds",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        4144,
+        640
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "GwGxiH59Jb6UlV6X",
+          "name": "Header Auth Fal.ai"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 60
+      },
+      "id": "8099bc1e-d4e2-4d54-bd12-5e7ad68695ff",
+      "name": "Wait for Sounds",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        3840,
+        640
+      ],
+      "typeVersion": 1.1,
+      "webhookId": "da652ca6-3035-422c-b0b7-0c7f49d86008"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [\n  {\n    video_urls: items.map(item => item.json.video.url)\n  }\n];"
+      },
+      "id": "da36766c-d6b5-4961-bea3-fe5fe00040d4",
+      "name": "List Elements",
+      "type": "n8n-nodes-base.code",
+      "position": [
+        3424,
+        832
+      ],
+      "typeVersion": 2
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://queue.fal.run/fal-ai/ffmpeg-api/compose",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={\n  \"tracks\": [\n    {\n      \"id\": \"1\",\n      \"type\": \"video\",\n      \"keyframes\": [\n        { \"url\": \"{{ $json.video_urls[0] }}\", \"timestamp\": 0, \"duration\": 10 },\n        { \"url\": \"{{ $json.video_urls[1] }}\", \"timestamp\": 10, \"duration\": 10 },\n        { \"url\": \"{{ $json.video_urls[2] }}\", \"timestamp\": 20, \"duration\": 10 }\n      ]\n    }\n  ]\n}",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 2000
+            }
+          }
+        }
+      },
+      "id": "07381e49-1692-43f7-a347-83bee0a055dc",
+      "name": "Sequence Video",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        3616,
+        832
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "GwGxiH59Jb6UlV6X",
+          "name": "Header Auth Fal.ai"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=https://queue.fal.run/fal-ai/ffmpeg-api/requests/{{ $json.request_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "69002394-3f2c-4eeb-9f64-ad2e52d8fe95",
+      "name": "Get Final Video",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        4144,
+        832
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "GwGxiH59Jb6UlV6X",
+          "name": "Header Auth Fal.ai"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 60
+      },
+      "id": "61acc165-76c8-4833-8d3c-dce04cb6b161",
+      "name": "Wait for Final Video",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        3840,
+        832
+      ],
+      "typeVersion": 1.1,
+      "webhookId": "e1da98a2-c77e-47c2-b526-36d64e7693e6"
+    },
+    {
+      "parameters": {},
+      "id": "b6c29c81-dbaf-4c17-a105-a6eaf5529128",
+      "name": "Think",
+      "type": "@n8n/n8n-nodes-langchain.toolThink",
+      "position": [
+        2976,
+        736
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "id": "b2ffa27f-41f1-42f9-ad2f-dbda83c00376",
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        2592,
+        688
+      ],
+      "typeVersion": 1.2,
+      "credentials": {
+        "openAiApi": {
+          "id": "ugMNFjqYLZ81em2y",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Give me 3 video prompts based on the previous \n\nUse the Think tool to review your output",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=Role: You are a prompt-generation AI specializing in trendy, fun, and high-energy short-form video ideas. Your task is to create a multi-scene video sequence that vividly captures entertaining, dynamic, and visually engaging moments.\n\nYour writing must follow this style:\n\n- Energetic, fast-paced realism.\n- Clear visual actions with movement in every shot — no idle or static moments.\n- Camera terms are allowed (e.g. close-up, wide shot, POV, tracking).\n- Each scene should have a clear action and camera perspective.\n\nEach scene must include:\n\n✅ The main subject or action (from the Idea)  \n✅ The filming location and key visual details (from the Environment)  \n✅ How the subject moves or interacts with the environment  \n✅ Any notable props or objects visible in the shot\n\nDescriptions should show:\n\n- The physical details of the subject — clothing, colors, expressions, or unique features.\n- The movement or action — dance, sports, tricks, reactions, etc.\n- Interaction with the environment — objects, people, or setting elements.\n- Audio cues like cheering, music, or sound effects, but shown as part of the scene description (not narrated).\n\nTone:\n\n- Fun, exciting, and visually clear.\n- No poetic metaphors, fantasy elements, or emotional storytelling.\n- All scenes should feel physically grounded and match the energy of trending short videos.\n\nLength:\n\n- Each scene must be between 200 and 400 characters.\n- No shallow or repetitive scenes — each must be unique, dynamic, and specific.\n- Each scene should explore a distinct phase of the action, a different camera perspective, or a new interaction.\n\nInputs:\n\nIdea: \"{{ $json.idea }}\"\nEnvironment: \"{{ $json.environment_prompt }}\"\nSound: \"{{ $json.sound_prompt }}\"\n\nFormat:\n\nIdea: \"...\"\nEnvironment: \"...\"\nSound: \"...\"\n\nScene 1: \"...\"\nScene 2: \"...\"\nScene 3: \"...\"\n(and so on)\n"
+        }
+      },
+      "id": "1859a80e-2424-4259-b97a-c32985ba2478",
+      "name": "Prompts AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        3120,
+        464
+      ],
+      "typeVersion": 1.9
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "[\n  {\n    \"Caption\": \"Diver Removes Nets Off Whale 🐋 #whalerescue #marinelife #oceanrescue #seahelpers #love #nature #instagood #explore #viral #savenature #oceanguardians #cleanoceans\",\n    \"Idea\": \"Diver carefully cuts tangled net from distressed whale in open sea\",\n    \"Environment\": \"Open ocean, sunlight beams through water, diver and whale, cinematic realism\",\n    \"Sound\": \"Primary sound description under 15 words\",\n    \"Status\": \"Making\"\n  }\n]\n"
+      },
+      "id": "f8c57eb5-8ffd-4b9e-aab6-9f34661ce02a",
+      "name": "Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "position": [
+        2752,
+        688
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"Idea\": \"Fluffy golden retriever spinning in sync with owner’s dance\",\n  \"Environment\": \"Living room with colorful streamers, warm spotlight, playful POV angle\",\n  \"Sound\": \"Upbeat pop track with paws tapping on the floor\",\n  \"Scene 1\": \"Wide shot: owner starts dancing as the golden retriever watches curiously.\",\n  \"Scene 2\": \"Close-up: the retriever hops in place, wagging its tail in rhythm.\",\n  \"Scene 3\": \"Mid-shot: dog spins alongside owner, both smiling and moving perfectly in sync.\"\n}"
+      },
+      "id": "c379e71d-c1e5-4b35-bc6a-cc3b4d4a898d",
+      "name": "Parser2",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "position": [
+        3264,
+        624
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.wavespeed.ai/api/v3/bytedance/seedance-v1-pro-t2v-480p",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "duration",
+              "value": "5"
+            },
+            {
+              "name": "prompt",
+              "value": "={{ $json.description }}"
+            },
+            {
+              "name": "seed",
+              "value": "-1"
+            }
+          ]
+        },
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 1,
+              "batchInterval": 3000
+            }
+          },
+          "redirect": {
+            "redirect": {}
+          }
+        }
+      },
+      "id": "dc6382c8-643e-422c-9eab-4422c6d6d02b",
+      "name": "Create Clips",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        3616,
+        416
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "H27MhFAc4hhAgZDz",
+          "name": "Header Auth Speedwave"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 120
+      },
+      "id": "e9e579fc-a5f0-41d9-9ebb-d87496fef3c3",
+      "name": "Wait for Clips",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        3840,
+        416
+      ],
+      "typeVersion": 1.1,
+      "webhookId": "b0b3ddab-ada8-4d7d-b32d-27e6a5dd046e"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.wavespeed.ai/api/v3/predictions/{{ $json.data.id }}/result",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "c6a2f2ad-dd05-46e3-8ad5-b6dd50820ef1",
+      "name": "Get Clips",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        4144,
+        416
+      ],
+      "typeVersion": 4.2,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "H27MhFAc4hhAgZDz",
+          "name": "Header Auth Speedwave"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "operation": "upload",
+        "title": "=Generated Shorts",
+        "regionCode": "KR",
+        "categoryId": "=24",
+        "options": {
+          "description": "=AI-Generated Video Idea: ai-trending\n\nThis short was made automatically with our fast AI workflow #aivideo #shorts #trendingnow #n8n\n",
+          "notifySubscribers": true,
+          "privacyStatus": "private",
+          "tags": "=shorts, video, gen, n8n, automation"
+        }
+      },
+      "id": "18008d40-532f-433e-81a8-3e37f1e0fe74",
+      "name": "Upload to YouTube",
+      "type": "n8n-nodes-base.youTube",
+      "position": [
+        4688,
+        1072
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "youTubeOAuth2Api": {
+          "id": "sop6gRJdInKdrxAj",
+          "name": "YouTube account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "6259678849",
+        "text": "=✅ Your new video is ready!  **Title:** {{ $('Update Final Video to Sheet').item.json.idea }}  \nWatch it here: \nhttps://www.youtube.com/watch?v={{ $('Upload to YouTube').item.json.id }}",
+        "additionalFields": {
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "69fe35e6-0e83-49d2-8853-ace99277196a",
+      "name": "Telegram Notification",
+      "type": "n8n-nodes-base.telegram",
+      "position": [
+        5072,
+        1392
+      ],
+      "typeVersion": 1.2,
+      "webhookId": "a6d9601f-29ed-49a1-a8f8-cd1aa286207e",
+      "credentials": {
+        "telegramApi": {
+          "id": "EhVdjHB6q35ZKHmp",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini"
+        },
+        "options": {}
+      },
+      "id": "a6b260b0-4599-46b4-91e5-2e99ec87d1ba",
+      "name": "OpenAI Chat Model1",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        2176,
+        672
+      ],
+      "typeVersion": 1.2,
+      "credentials": {
+        "openAiApi": {
+          "id": "ugMNFjqYLZ81em2y",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "your-email@gmail.com",
+        "subject": "✅ Your new video is ready!",
+        "message": "=✅ Your new video is ready!  **Title:** {{ $json.idea }}  Watch it here: https://www.youtube.com/watch?v={{ $('Upload to YouTube').item.json.uploadId }}",
+        "options": {
+          "senderName": "Bilsimaging -n8n Automation"
+        }
+      },
+      "id": "f79bada8-0202-4bba-adb8-6b7f8c78734a",
+      "name": "Gmail Notification",
+      "type": "n8n-nodes-base.gmail",
+      "position": [
+        5072,
+        1200
+      ],
+      "typeVersion": 2.1,
+      "webhookId": "7f80bdfe-3a8f-4a19-a52c-1a4eecce7d01",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "Z9xqG2FmNKsPBjRq",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "Come up with one of the most popular YouTube Shorts video ideas right now. Explain the core concept in 10 words or less. Don't explain, just present the idea.",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are an AI specialized in identifying viral trends on platforms such as TikTok and YouTube Shorts. Your mission is to come up with the trendiest and most popular short video concepts. Ideas must be returned as a single line of plain text. Do not add any additional words, formatting, or explanations."
+        }
+      },
+      "id": "facd4d5f-24c8-4068-bb23-9efdcd75e2ac",
+      "name": "1. Generate Trendy Idea",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        2176,
+        464
+      ],
+      "typeVersion": 1.9
+    },
+    {
+      "parameters": {
+        "content": "### Step 1: 아이디어 도출\n\n[{\"출력\": \"주인의 재미있는 춤 동작에 반응하는 반려동물들.\"}]",
+        "height": 132,
+        "width": 476,
+        "color": 3
+      },
+      "id": "855c2d6a-3686-45e0-b0f4-561dc322686b",
+      "name": "Note: AI Ideation",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1936,
+        304
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "### 2단계: 장면 생성 및 비디오 제작\n이 계획은 자세한 장면 설명을 생성하는 데 사용됩니다. 그런 다음 Wavespeed AI(Seedance)와 Fal AI API를 호출하여 비디오 클립과 음향 효과를 병렬로 생성합니다.",
+        "height": 116,
+        "width": 824,
+        "color": 3
+      },
+      "id": "684d6eb4-a746-4c6a-a6ae-9c4b6d648ff2",
+      "name": "Note: Asset Generation",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2512,
+        320
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "### 3단계: 최종 조립\n비디오 클립이 서로 연결되어 있습니다.",
+        "height": 100,
+        "width": 660,
+        "color": 3
+      },
+      "id": "40532004-8943-44ea-baa7-edaf39f9f48d",
+      "name": "Note: Final Assembly",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        3472,
+        288
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "content": "### 4단계: 배포 및 로깅\n최종 동영상이 YouTube에 업로드되고, Google 시트가 업데이트되며, 알림이 전송됩니다.",
+        "height": 180,
+        "width": 960,
+        "color": 3
+      },
+      "id": "08f88e4e-edc0-4ff6-9707-4de426a8aefb",
+      "name": "Note: Distribution",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        4416,
+        240
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Select the following trendy and popular shorts idea and expand it into a complete production plan using the required JSON format. Refer to the example below for inspiration on how to format the “Idea” field.\n\nHere is a short idea:\n[[\n{{ $json.output }}\n]]\n\nThe final expanded “Idea” field should be written in the following format: “(color/style) (object) doing (action).”  \nExample: A hamster cooking, a rabbit singing, a squirrel running a race.\n\nUse the Think tool to review the output.",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=**Role**: An AI that generates one immersive and satisfying idea based on a topic provided by the user. The output must be written in JSON array (single row) format and must strictly adhere to all of the rules below.\n\n***\nRules:\n\nOnly one idea should be returned at a time.\n\nThe user will provide the main topic (e.g., “dynamic sand cutting,” “satisfying sand scooping,” “ASMR sand sounds”).  \n\nThe idea should be:  \n\nLess than 13 words.  \n\nDescribe an interesting and viral-worthy moment, action, or event related to the provided topic.\n\nThe caption must be:\n\nShort, impactful, and viral-friendly.\n\nInclude 1 relevant emoji.\n\nInclude exactly 12 hashtags in the following order:\n** 4 hashtags related to the topic\n** 4 hashtags that are most popular across all time zones\n** 4 hashtags that are currently trending\n\n\nAll hashtags must be lowercase.\n\nSet Status to \"for production\" (always).\n\nThe Environment must:\n\nBe under 20 words.\n\nMatch the action in the Idea exactly.\n\nClearly describe:\n\nWhere the event is happening (e.g. minimalist white surface, clean studio table)\nKey visuals or background details (e.g. bright lighting, subtle glitter)\nStyle of scene (e.g. macro close-up, cinematic slow-motion)\n\nThe Sound must:\n\nBe under 15 words.\n\nDescribe the primary sound that makes sense to happen in the video. This will be fed to a sound model later on.\n\n\n***\nOUTPUT FORMAT (single-line JSON array):\n\n[\n{\n\"Caption\": \"Glass fruit slice sounds unreal 😳🔪 #glassfruit #satisfyingcut #asmrglass #cuttingfruit #oddlysatisfying #viral #fyp #explore #trending #shorts #asmrvideo #visualasmr\",\n\"Idea\": \"Slicing a hyper-realistic glass watermelon with a ceramic knife\",\n\"Environment\": \"Macro close-up on white marble table, sharp lighting, cinematic slow motion\",\n\"Sound\": \"Delicate glass crackle followed by a smooth ceramic slicing sound\",\n\"Status\": \"Making\"\n}\n]"
+        }
+      },
+      "id": "578265b5-981d-45a2-8ba9-f1cd20a95425",
+      "name": "2. Enrich Idea into Plan",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        2576,
+        464
+      ],
+      "typeVersion": 1.9
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1Jq4zOV3YYCtAAssWfJQ0uOpNoPm125IWsrBMcfSmUHc",
+          "mode": "list",
+          "cachedResultName": "10-쇼츠자동화",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Jq4zOV3YYCtAAssWfJQ0uOpNoPm125IWsrBMcfSmUHc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "시트1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Jq4zOV3YYCtAAssWfJQ0uOpNoPm125IWsrBMcfSmUHc/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "caption": "={{ $json.output[0].Caption }}",
+            "idea": "={{ $json.output[0].Idea }}",
+            "environment_prompt": "={{ $json.output[0].Environment }}",
+            "sound_prompt": "={{ $json.output[0].Sound }}",
+            "status": "={{ $json.output[0].Status }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "caption",
+              "displayName": "caption",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "idea",
+              "displayName": "idea",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "environment_prompt",
+              "displayName": "environment_prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "sound_prompt",
+              "displayName": "sound_prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "video_url",
+              "displayName": "video_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "thumbnail_url",
+              "displayName": "thumbnail_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "6b5ee9c3-c98d-490f-8af1-0ff7ef6126e1",
+      "name": "3. Log New Idea to Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        2928,
+        464
+      ],
+      "typeVersion": 4.5,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "crQhuch7dXX3QwGD",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1Jq4zOV3YYCtAAssWfJQ0uOpNoPm125IWsrBMcfSmUHc",
+          "mode": "list",
+          "cachedResultName": "10-쇼츠자동화",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Jq4zOV3YYCtAAssWfJQ0uOpNoPm125IWsrBMcfSmUHc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "시트1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Jq4zOV3YYCtAAssWfJQ0uOpNoPm125IWsrBMcfSmUHc/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "video_url": "={{ $('Get Final Video').item.json.video_url }}",
+            "thumbnail_url": "={{ $('Get Final Video').item.json.thumbnail_url }}",
+            "row_number": "={{ $json.row_number }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "caption",
+              "displayName": "caption",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "idea",
+              "displayName": "idea",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "environment_prompt",
+              "displayName": "environment_prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "sound_prompt",
+              "displayName": "sound_prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "video_url",
+              "displayName": "video_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "thumbnail_url",
+              "displayName": "thumbnail_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "90227205-0a28-49e1-8d09-3f0fdb28cbba",
+      "name": "Update Final Video to Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        4512,
+        848
+      ],
+      "typeVersion": 4.5,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "crQhuch7dXX3QwGD",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1Jq4zOV3YYCtAAssWfJQ0uOpNoPm125IWsrBMcfSmUHc",
+          "mode": "list",
+          "cachedResultName": "10-쇼츠자동화",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Jq4zOV3YYCtAAssWfJQ0uOpNoPm125IWsrBMcfSmUHc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "시트1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Jq4zOV3YYCtAAssWfJQ0uOpNoPm125IWsrBMcfSmUHc/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "status": "complete",
+            "row_number": "={{ $('Get row(s) in sheet1').item.json.row_number }}"
+          },
+          "matchingColumns": [
+            "row_number"
+          ],
+          "schema": [
+            {
+              "id": "caption",
+              "displayName": "caption",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "idea",
+              "displayName": "idea",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "environment_prompt",
+              "displayName": "environment_prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "sound_prompt",
+              "displayName": "sound_prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "video_url",
+              "displayName": "video_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "thumbnail_url",
+              "displayName": "thumbnail_url",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "80b0be39-0fd7-4185-9808-8ac39507a86c",
+      "name": "Update Sheet with Youtube Link",
+      "type": "n8n-nodes-base.googleSheets",
+      "position": [
+        5072,
+        848
+      ],
+      "typeVersion": 4.5,
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "crQhuch7dXX3QwGD",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.creatomate.com/v1/renders",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"template_id\": \"7ab7e935-6336-4cae-8291-01b418ed4b90\",\n  \"modifications\": {\n    \"Video-DHM.source\": \"{{ $json.video_url }}\"\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        3872,
+        1040
+      ],
+      "id": "76dfe95e-5b9f-4028-a568-bc4d9c79c6c1",
+      "name": "HTTP Request",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "YIEGxzI1QJQqj3X0",
+          "name": "Header Auth Creatomate"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.video_url }}",
+        "options": {
+          "response": {
+            "response": {}
+          }
+        }
+      },
+      "id": "b1e18494-0a9c-4fc3-bb49-e7752c2cc847",
+      "name": "Download Final Video",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        4464,
+        1072
+      ],
+      "typeVersion": 4.2
+    },
+    {
+      "parameters": {
+        "amount": 60
+      },
+      "id": "835db2cc-91a1-4648-b684-d492bc6a8d3c",
+      "name": "Wait for Final Video1",
+      "type": "n8n-nodes-base.wait",
+      "position": [
+        4064,
+        1040
+      ],
+      "typeVersion": 1.1,
+      "webhookId": "a22e58c9-1857-4ee7-aa18-5b682b5ffc69"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        1920,
+        464
+      ],
+      "id": "f066e60a-5973-4167-90ce-6acf9e84f0e3",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0996CSV7RC",
+          "mode": "list",
+          "cachedResultName": "소셜"
+        },
+        "text": "=✅ Your new video is ready!  **Title:** {{ $json.idea }}   Watch it here:  https://www.youtube.com/watch?v={{ $('Upload to YouTube').item.json.uploadId }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        5072,
+        1040
+      ],
+      "id": "7501960a-2d56-4992-931c-7f014f501001",
+      "name": "Send a message",
+      "webhookId": "27cf8934-f0a4-45b0-a754-0104136fcd64",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "4Jg4LpwwXgZDWsAf",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1Jq4zOV3YYCtAAssWfJQ0uOpNoPm125IWsrBMcfSmUHc",
+          "mode": "list",
+          "cachedResultName": "10-쇼츠자동화",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Jq4zOV3YYCtAAssWfJQ0uOpNoPm125IWsrBMcfSmUHc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "시트1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1Jq4zOV3YYCtAAssWfJQ0uOpNoPm125IWsrBMcfSmUHc/edit#gid=0"
+        },
+        "options": {
+          "dataLocationOnSheet": {
+            "values": {
+              "rangeDefinition": "detectAutomatically",
+              "readRowsUntil": "firstEmptyRow"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        4320,
+        848
+      ],
+      "id": "577ad548-66a5-454e-83a2-f34d8873bc8d",
+      "name": "Get row(s) in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "crQhuch7dXX3QwGD",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Think": {
+      "ai_tool": [
+        [
+          {
+            "node": "2. Enrich Idea into Plan",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "Prompts AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "2. Enrich Idea into Plan",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parser2": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Prompts AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Clips": {
+      "main": [
+        [
+          {
+            "node": "Create Sounds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Sounds": {
+      "main": [
+        [
+          {
+            "node": "List Elements",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Clips": {
+      "main": [
+        [
+          {
+            "node": "Wait for Clips",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Sounds": {
+      "main": [
+        [
+          {
+            "node": "Wait for Sounds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "List Elements": {
+      "main": [
+        [
+          {
+            "node": "Sequence Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sequence Video": {
+      "main": [
+        [
+          {
+            "node": "Wait for Final Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for Clips": {
+      "main": [
+        [
+          {
+            "node": "Get Clips",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Final Video": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for Sounds": {
+      "main": [
+        [
+          {
+            "node": "Get Sounds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prompts AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Unbundle Prompts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Unbundle Prompts": {
+      "main": [
+        [
+          {
+            "node": "Create Clips",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "2. Enrich Idea into Plan",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Prompts AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload to YouTube": {
+      "main": [
+        [
+          {
+            "node": "Update Sheet with Youtube Link",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Gmail Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "1. Generate Trendy Idea",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for Final Video": {
+      "main": [
+        [
+          {
+            "node": "Get Final Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "1. Generate Trendy Idea": {
+      "main": [
+        [
+          {
+            "node": "2. Enrich Idea into Plan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2. Enrich Idea into Plan": {
+      "main": [
+        [
+          {
+            "node": "3. Log New Idea to Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "3. Log New Idea to Sheet": {
+      "main": [
+        [
+          {
+            "node": "Prompts AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Final Video to Sheet": {
+      "main": [
+        [
+          {
+            "node": "Download Final Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Final Video": {
+      "main": [
+        [
+          {
+            "node": "Upload to YouTube",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Wait for Final Video1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for Final Video1": {
+      "main": [
+        []
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "1. Generate Trendy Idea",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        []
+      ]
+    },
+    "Gmail Notification": {
+      "main": [
+        []
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Update Final Video to Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "versionId": "8083655f-b140-4893-9f70-c9460659d720",
+  "meta": {
+    "templateId": "5110",
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b7677542f30a1fd6c4c70a150414e98931044fc4dfd46655e6a9105a3cb936e6"
+  },
+  "id": "n5RaJiOEsSRuhyaJ",
+  "tags": []
+}
