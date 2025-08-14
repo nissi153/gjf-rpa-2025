@@ -1,0 +1,247 @@
+{
+  "name": "17. 웹 스크래핑 - 네이버 블로그",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -272,
+        -128
+      ],
+      "id": "e70ac313-b16d-4951-b043-374957107d78",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.apify.com/v2/acts/aYG0l9s7dbB7j3gbS/runs?token=",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"startUrls\": [\n    {\n      \"url\": \"https://blog.naver.com/rainyrj/223489919352\"\n    }\n  ],\n  \"useSitemaps\": false,\n  \"respectRobotsTxtFile\": true,\n  \"crawlerType\": \"playwright:adaptive\",\n  \"includeUrlGlobs\": [],\n  \"excludeUrlGlobs\": [],\n  \"keepUrlFragments\": false,\n  \"ignoreCanonicalUrl\": false,\n  \"ignoreHttpsErrors\": false,\n  \"maxCrawlDepth\": 20,\n  \"maxCrawlPages\": 9999999,\n  \"initialConcurrency\": 0,\n  \"maxConcurrency\": 200,\n  \"initialCookies\": [],\n  \"proxyConfiguration\": {\n    \"useApifyProxy\": true\n  },\n  \"maxSessionRotations\": 10,\n  \"maxRequestRetries\": 3,\n  \"requestTimeoutSecs\": 60,\n  \"minFileDownloadSpeedKBps\": 128,\n  \"dynamicContentWaitSecs\": 10,\n  \"waitForSelector\": \"\",\n  \"softWaitForSelector\": \"\",\n  \"maxScrollHeightPixels\": 5000,\n  \"keepElementsCssSelector\": \"\",\n  \"removeElementsCssSelector\": \"nav, footer, script, style, noscript, svg, img[src^='data:'],\\n[role=\\\"alert\\\"],\\n[role=\\\"banner\\\"],\\n[role=\\\"dialog\\\"],\\n[role=\\\"alertdialog\\\"],\\n[role=\\\"region\\\"][aria-label*=\\\"skip\\\" i],\\n[aria-modal=\\\"true\\\"]\",\n  \"removeCookieWarnings\": true,\n  \"blockMedia\": true,\n  \"expandIframes\": true,\n  \"clickElementsCssSelector\": \"[aria-expanded=\\\"false\\\"]\",\n  \"htmlTransformer\": \"readableText\",\n  \"readableTextCharThreshold\": 100,\n  \"aggressivePrune\": false,\n  \"debugMode\": false,\n  \"debugLog\": false,\n  \"saveHtml\": false,\n  \"saveHtmlAsFile\": false,\n  \"saveMarkdown\": true,\n  \"saveFiles\": false,\n  \"saveScreenshots\": false,\n  \"maxResults\": 9999999,\n  \"clientSideMinChangePercentage\": 15,\n  \"renderingTypeDetectionPercentage\": 10\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -80,
+        -128
+      ],
+      "id": "4353ed1d-9b86-4647-87ca-d3969ecc83d4",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "16086ddf-a4ae-4f40-8a55-f45c2bff68a0",
+              "leftValue": "= {{ $json.data.defaultDatasetId }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -240,
+        192
+      ],
+      "id": "b8312424-fb10-4199-ae48-27ad9447e48b",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.apify.com/v2/datasets/{{ $json.data.defaultDatasetId }}/items?token=",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -32,
+        176
+      ],
+      "id": "98778e0d-bc49-4fd3-b59a-8366eb543ac1",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0996CSV7RC",
+          "mode": "list",
+          "cachedResultName": "소셜"
+        },
+        "text": "={{ $json.text }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        176,
+        176
+      ],
+      "id": "10ba4e30-de5c-491d-aa30-1bc2eddfb68b",
+      "name": "Send a message",
+      "webhookId": "1e0bb39d-7340-4a9a-9129-bb2c49ab6060",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "4Jg4LpwwXgZDWsAf",
+          "name": "Slack account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "HTTP Request": [
+      {
+        "json": {
+          "data": {
+            "id": "dcszLdFuglQIod61F",
+            "actId": "aYG0l9s7dbB7j3gbS",
+            "userId": "D3Zm5hBegjSPNuIbt",
+            "startedAt": "2025-08-12T14:37:11.106Z",
+            "finishedAt": null,
+            "status": "READY",
+            "meta": {
+              "origin": "API",
+              "userAgent": "axios/1.8.3"
+            },
+            "stats": {
+              "inputBodyLen": 1343,
+              "migrationCount": 0,
+              "rebootCount": 0,
+              "restartCount": 0,
+              "resurrectCount": 0,
+              "computeUnits": 0
+            },
+            "options": {
+              "build": "version-0",
+              "timeoutSecs": 360000,
+              "memoryMbytes": 8192,
+              "diskMbytes": 16384
+            },
+            "buildId": "N5wC2ArUbLgbcEpaX",
+            "defaultKeyValueStoreId": "CaRuBieWaFVGIjzUK",
+            "defaultDatasetId": "V2sTex4wRThqBiN9z",
+            "defaultRequestQueueId": "l4ES4nncUiwEJwoi7",
+            "platformUsageBillingModel": "USER",
+            "generalAccess": "FOLLOW_USER_SETTING",
+            "buildNumber": "0.3.67",
+            "containerUrl": "https://jjcuksbecegp.runs.apify.net",
+            "usage": {
+              "ACTOR_COMPUTE_UNITS": 0,
+              "DATASET_READS": 0,
+              "DATASET_WRITES": 0,
+              "KEY_VALUE_STORE_READS": 0,
+              "KEY_VALUE_STORE_WRITES": 1,
+              "KEY_VALUE_STORE_LISTS": 0,
+              "REQUEST_QUEUE_READS": 0,
+              "REQUEST_QUEUE_WRITES": 0,
+              "DATA_TRANSFER_INTERNAL_GBYTES": 0,
+              "DATA_TRANSFER_EXTERNAL_GBYTES": 0,
+              "PROXY_RESIDENTIAL_TRANSFER_GBYTES": 0,
+              "PROXY_SERPS": 0
+            },
+            "usageTotalUsd": 0.00005,
+            "usageUsd": {
+              "ACTOR_COMPUTE_UNITS": 0,
+              "DATASET_READS": 0,
+              "DATASET_WRITES": 0,
+              "KEY_VALUE_STORE_READS": 0,
+              "KEY_VALUE_STORE_WRITES": 0.00005,
+              "KEY_VALUE_STORE_LISTS": 0,
+              "REQUEST_QUEUE_READS": 0,
+              "REQUEST_QUEUE_WRITES": 0,
+              "DATA_TRANSFER_INTERNAL_GBYTES": 0,
+              "DATA_TRANSFER_EXTERNAL_GBYTES": 0,
+              "PROXY_RESIDENTIAL_TRANSFER_GBYTES": 0,
+              "PROXY_SERPS": 0
+            }
+          }
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "5b276c23-56af-4257-b6bf-12f68c596cc8",
+  "meta": {
+    "instanceId": "b7677542f30a1fd6c4c70a150414e98931044fc4dfd46655e6a9105a3cb936e6"
+  },
+  "id": "NWXyckN9pJ6k8OZJ",
+  "tags": []
+}
